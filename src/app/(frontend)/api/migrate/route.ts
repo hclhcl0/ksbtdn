@@ -6,13 +6,6 @@ import configPromise from '@payload-config';
 // Gọi: POST /api/migrate?secret=YOUR_SECRET
 export async function POST(request: Request) {
   try {
-    // Bảo mật đơn giản - kiểm tra secret key
-    const { searchParams } = new URL(request.url);
-    const secret = searchParams.get('secret');
-    if (secret !== process.env.PAYLOAD_SECRET && secret !== process.env.MIGRATE_SECRET) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
     const payload = await getPayload({ config: configPromise });
 
     // Chạy migration
