@@ -5,6 +5,10 @@ import { lexicalEditor } from '@payloadcms/richtext-lexical';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
+// DATABASE_URI = custom Postgres URL
+// POSTGRES_URL = auto-injected by Vercel Postgres addon
+const dbUrl = process.env.DATABASE_URI || process.env.POSTGRES_URL;
+
 import { Users } from './collections/Users.ts';
 import { Media } from './collections/Media.ts';
 import { Categories } from './collections/Categories.ts';
@@ -51,10 +55,10 @@ export default buildConfig({
   ],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || 'YOUR-SUPER-SECRET-KEY',
-  db: process.env.DATABASE_URI
+  db: dbUrl
     ? postgresAdapter({
         pool: {
-          connectionString: process.env.DATABASE_URI,
+          connectionString: dbUrl,
         },
       })
     : sqliteAdapter({
