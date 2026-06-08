@@ -7,19 +7,30 @@ import configPromise from '@payload-config';
 import styles from './Footer.module.css';
 
 export const Footer = async () => {
-  const payload = await getPayload({ config: configPromise });
-  const globalFooter = await payload.findGlobal({ slug: 'footer' });
+  let aboutText = 'Trung tâm Kiểm soát Bệnh tật Thành phố Đà Nẵng';
+  let addressMain = '118 Lê Đình Lý, Phường Thanh Khê, Thành phố Đà Nẵng';
+  let addressSub = '';
+  let phone = '0236 3890 407';
+  let email = 'kiemsoatbenhtat@danang.gov.vn';
+  let copyrightText = `© Bản quyền thuộc về TRUNG TÂM KIỂM SOÁT BỆNH TẬT THÀNH PHỐ ĐÀ NẴNG`;
+  let designerCredit = 'thiết kế bởi CNTT CDC Đà Nẵng';
+  let globalFooter: any = {};
 
-  const aboutText = globalFooter.aboutText || 'Trung tâm Kiểm soát Bệnh tật Thành phố Đà Nẵng';
-  const addressMain = globalFooter.addressMain || '118 Lê Đình Lý, Phường Thanh Khê, Thành phố Đà Nẵng';
-  const addressSub = globalFooter.addressSub || '';
-  const phone = globalFooter.phone || '0236 3890 407';
-  const email = globalFooter.email || 'kiemsoatbenhtat@danang.gov.vn';
-
-  const currentYear = new Date().getFullYear().toString();
-  const rawCopyright = globalFooter.copyrightText || '© Bản quyền thuộc về TRUNG TÂM KIỂM SOÁT BỆNH TẬT THÀNH PHỐ ĐÀ NẴNG';
-  const copyrightText = rawCopyright.replace('{year}', currentYear);
-  const designerCredit = globalFooter.designerCredit || 'thiết kế bởi CNTT CDC Đà Nẵng';
+  try {
+    const payload = await getPayload({ config: configPromise });
+    globalFooter = await payload.findGlobal({ slug: 'footer' });
+    aboutText = globalFooter.aboutText || aboutText;
+    addressMain = globalFooter.addressMain || addressMain;
+    addressSub = globalFooter.addressSub || '';
+    phone = globalFooter.phone || phone;
+    email = globalFooter.email || email;
+    const currentYear = new Date().getFullYear().toString();
+    const rawCopyright = globalFooter.copyrightText || copyrightText;
+    copyrightText = rawCopyright.replace('{year}', currentYear);
+    designerCredit = globalFooter.designerCredit || designerCredit;
+  } catch (e) {
+    console.error('Footer: error fetching global footer data:', e);
+  }
 
   return (
     <footer className={styles.footer}>
