@@ -1,0 +1,188 @@
+import { NextResponse } from 'next/server';
+import { getPayload } from 'payload';
+import configPromise from '@payload-config';
+
+export async function GET() {
+  try {
+    const payload = await getPayload({ config: configPromise });
+
+    console.log("Seeding Categories...");
+    const category = await payload.create({
+      collection: 'categories',
+      data: {
+        name: 'Tin tức - Sự kiện',
+        slug: 'tin-tuc-su-kien-danang-' + Date.now(),
+      }
+    });
+
+    console.log("Seeding Articles...");
+    const articles = [
+      {
+        title: 'Trạm Hòa Cường 3 tạo điểm sáng trong tuần lễ "Toàn dân đo huyết áp" năm 2026',
+        description: 'Hưởng ứng Tuần lễ "Toàn dân đo huyết áp" năm 2026 của thành phố Đà Nẵng, Trạm Hòa Cường 3 vừa qua đã triển khai chiến dịch vô cùng sôi nổi.',
+        content: {
+          root: {
+            type: 'root',
+            format: '',
+            indent: 0,
+            version: 1,
+            children: [
+              {
+                type: 'paragraph',
+                format: '',
+                indent: 0,
+                version: 1,
+                children: [
+                  {
+                    mode: 'normal',
+                    text: 'Hưởng ứng Tuần lễ "Toàn dân đo huyết áp" năm 2026 của thành phố Đà Nẵng, Trạm Hòa Cường 3 vừa qua đã triển khai chiến dịch vô cùng sôi nổi, chính thức khép lại với những kết quả hết sức tích cực.',
+                    type: 'text',
+                    version: 1,
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      },
+      {
+        title: 'Đà Nẵng sẵn sàng triển khai khám sức khỏe định kỳ hoặc khám sàng lọc miễn phí cho người dân từ ngày 05/6/2026',
+        description: 'Năm 2026 đánh dấu bước chuyển quan trọng của ngành Y tế trong công tác chăm sóc sức khỏe nhân dân khi chương trình khám sức khỏe định kỳ, khám sàng lọc miễn phí cho người dân được triển khai đồng bộ.',
+        content: {
+          root: {
+            type: 'root',
+            format: '',
+            indent: 0,
+            version: 1,
+            children: [
+              {
+                type: 'paragraph',
+                format: '',
+                indent: 0,
+                version: 1,
+                children: [
+                  {
+                    mode: 'normal',
+                    text: 'Năm 2026 đánh dấu bước chuyển quan trọng của ngành Y tế trong công tác chăm sóc sức khỏe nhân dân khi chương trình khám sức khỏe định kỳ, khám sàng lọc miễn phí cho người dân được triển khai đồng bộ.',
+                    type: 'text',
+                    version: 1,
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      },
+      {
+        title: 'Hưởng ứng Ngày truyền thống Người cao tuổi Việt Nam (06/6/2026) và các hoạt động chúc thọ, mừng thọ người cao tuổi',
+        description: 'Các hoạt động khám sức khỏe, chăm sóc và chúc thọ người cao tuổi trên địa bàn Thành phố Đà Nẵng.',
+        content: {
+          root: {
+            type: 'root',
+            format: '',
+            indent: 0,
+            version: 1,
+            children: [
+              {
+                type: 'paragraph',
+                format: '',
+                indent: 0,
+                version: 1,
+                children: [
+                  {
+                    mode: 'normal',
+                    text: 'Hưởng ứng Ngày truyền thống Người cao tuổi Việt Nam (06/6/2026) và các hoạt động chúc thọ, mừng thọ người cao tuổi. Các hoạt động khám sức khỏe, chăm sóc và chúc thọ người cao tuổi trên địa bàn Thành phố Đà Nẵng.',
+                    type: 'text',
+                    version: 1,
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      },
+      {
+        title: 'Đảm bảo công tác y tế và hưởng ứng Tháng hành động vì môi trường Tuần lễ Biển và Hải đảo Việt Nam năm 2026',
+        description: 'Hoạt động nhằm đảm bảo y tế và môi trường tại khu vực Biển Đà Nẵng.',
+        content: {
+          root: {
+            type: 'root',
+            format: '',
+            indent: 0,
+            version: 1,
+            children: [
+              {
+                type: 'paragraph',
+                format: '',
+                indent: 0,
+                version: 1,
+                children: [
+                  {
+                    mode: 'normal',
+                    text: 'Đảm bảo công tác y tế và hưởng ứng Tháng hành động vì môi trường Tuần lễ Biển và Hải đảo Việt Nam năm 2026.',
+                    type: 'text',
+                    version: 1,
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      }
+    ];
+
+    for (let idx = 0; idx < articles.length; idx++) {
+      const a = articles[idx];
+      await payload.create({
+        collection: 'articles',
+        data: {
+          title: a.title,
+          slug: 'da-nang-' + (Math.random().toString(36).substring(7)),
+          category: category.id,
+          description: a.description,
+          content: a.content as any,
+        }
+      });
+    }
+
+    console.log("Updating Globals...");
+    const oldHeader = await payload.findGlobal({ slug: 'header' });
+    await payload.updateGlobal({
+      slug: 'header',
+      data: {
+        ...oldHeader,
+        siteName: 'TRUNG TÂM KIỂM SOÁT BỆNH TẬT THÀNH PHỐ ĐÀ NẴNG',
+        hotline: {
+          phone: '0236 3890 407',
+          actionLink: 'https://ksbtdanang.vn/',
+        },
+        socialLinks: {
+          facebook: 'https://facebook.com/ksbtdanang',
+          youtube: 'https://youtube.com/@ksbtdanang',
+        }
+      }
+    });
+
+    const oldFooter = await payload.findGlobal({ slug: 'footer' });
+    await payload.updateGlobal({
+      slug: 'footer',
+      data: {
+        ...oldFooter,
+        aboutText: 'TRUNG TÂM KIỂM SOÁT BỆNH TẬT THÀNH PHỐ ĐÀ NẴNG',
+        addressMain: '118 Lê Đình Lý, Phường Thanh Khê, Thành phố Đà Nẵng',
+        addressSub: '',
+        phone: '0236 3890 407',
+        email: 'kiemsoatbenhtat@danang.gov.vn',
+        socialLinks: {
+          facebook: 'https://facebook.com/ksbtdanang',
+          youtube: 'https://youtube.com/@ksbtdanang',
+        }
+      }
+    });
+
+    return NextResponse.json({ success: true, message: 'Seeded CDC Da Nang data successfully!' });
+  } catch (error: any) {
+    console.error("Seeding error:", error);
+    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+  }
+}

@@ -1,0 +1,336 @@
+import { getPayload } from 'payload';
+import configPromise from './src/payload.config.ts';
+import fs from 'fs';
+import path from 'path';
+import { parse } from 'node-html-parser';
+
+// --- TIỆN ÍCH DỊCH CHUỖI ---
+function decodeHTMLEntities(text: string) {
+    if (!text) return text;
+    const entities: Record<string, string> = {
+        '&nbsp;': ' ', '&amp;': '&', '&lt;': '<', '&gt;': '>',
+        '&quot;': '"', '&#39;': "'", '&#x3A;': ':', '&#x3a;': ':',
+        '&ldquo;': '“', '&rdquo;': '”', '&lsquo;': '‘', '&rsquo;': '’',
+        '&ndash;': '–', '&mdash;': '—', '&hellip;': '…'
+    };
+    return text.replace(/&[#a-zA-Z0-9]+;/g, (match) => {
+        if (entities[match]) return entities[match];
+        if (match.startsWith('&#x')) return String.fromCharCode(parseInt(match.slice(3, -1), 16));
+        if (match.startsWith('&#')) return String.fromCharCode(parseInt(match.slice(2, -1), 10));
+        return match;
+    });
+}
+
+function generateSlug(text: string) {
+    return text.toString().toLowerCase()
+        .replace(/\s+/g, '-')
+        .replace(/[áàảãạâấầẩẫậăắằẳẵặ]/g, 'a')
+        .replace(/[éèẻẽẹêếềểễệ]/g, 'e')
+        .replace(/[íìỉĩị]/g, 'i')
+        .replace(/[óòỏõọôốồổỗộơớờởỡợ]/g, 'o')
+        .replace(/[úùủũụưứừửữự]/g, 'u')
+        .replace(/[ýỳỷỹỵ]/g, 'y')
+        .replace(/đ/g, 'd')
+        .replace(/[^\w\-]+/g, '')
+        .replace(/\-\-+/g, '-')
+        .replace(/^-+/, '')
+        .replace(/-+$/, '');
+}
+
+async function runMigration() {
+    console.log("🚀 Khởi động quá trình chuyển đổi dữ liệu từ NukeViet sang Payload CMS...");
+    
+    // 1. Khởi tạo Payload
+    const payload = await getPayload({ config: configPromise });
+    
+    const sqlPath = path.join(process.cwd(), 'ksbtdana6a10_home.sql');
+    if (!fs.existsSync(sqlPath)) {
+        console.error("❌ Không tìm thấy tệp SQL gốc: ksbtdana6a10_home.sql");
+        process.exit(1);
+    }
+
+    console.log("📂 Đang đọc tệp CSDL gốc...");
+    const sql = fs.readFileSync(sqlPath, 'utf8');
+
+    // ==========================================
+    // BƯỚC 1: TRÍCH XUẤT CHUYÊN MỤC
+    // ==========================================
+    console.log("🔍 Đang trích xuất danh sách chuyên mục...");
+    const startCat = sql.indexOf('INSERT INTO `tms_vi_news_cat`');
+    let nukeCategories: any[] = [];
+    
+    if (startCat !== -1) {
+        const endCat = sql.indexOf(';', startCat);
+        const catSql = sql.substring(startCat, endCat + 1);
+        const valuesPart = catSql.substring(catSql.indexOf('VALUES') + 6).trim();
+        const matches = valuesPart.match(/\((.*?)\)/g);
+        
+        if (matches) {
+            for (const match of matches) {
+                const strings = [];
+                const strRegex = /'((?:[^'\\]|\\.)*)'/g;
+                let m;
+                while ((m = strRegex.exec(match)) !== null) {
+                    strings.push(m[1]);
+                }
+                const nums = match.match(/\b\d+\b/g);
+                if (nums && strings.length > 0) {
+                    nukeCategories.push({
+                        catid: parseInt(nums[0]),
+                        title: strings[0]
+                    });
+                }
+            }
+        }
+    }
+    console.log(`✅ Đã tìm thấy ${nukeCategories.length} chuyên mục.`);
+
+    // ==========================================
+    // BƯỚC 2: TẠO CHUYÊN MỤC TRONG PAYLOAD
+    // ==========================================
+    console.log("⚙️  Đang khởi tạo chuyên mục vào CMS...");
+    const catIdMap: Record<number, string | number> = {};
+    for (const cat of nukeCategories) {
+        let payloadCat;
+        const search = await payload.find({
+            collection: 'categories',
+            where: { name: { equals: cat.title } }
+        });
+
+        if (search.docs.length > 0) {
+            payloadCat = search.docs[0];
+        } else {
+            payloadCat = await payload.create({
+                collection: 'categories',
+                data: { name: cat.title, slug: generateSlug(cat.title) }
+            });
+        }
+        catIdMap[cat.catid] = payloadCat.id;
+    }
+
+    // ==========================================
+    // BƯỚC 3: TRÍCH XUẤT THÔNG TIN BÀI VIẾT
+    // ==========================================
+    console.log("🔍 Đang phân tích thông tin bài viết...");
+    const rowsStart = sql.indexOf('INSERT INTO `tms_vi_news_rows` VALUES') + 'INSERT INTO `tms_vi_news_rows` VALUES'.length;
+    const detailsStart = sql.indexOf('INSERT INTO `tms_vi_news_detail` VALUES');
+    
+    const rowsStr = sql.substring(rowsStart, detailsStart);
+    const detailsStr = sql.substring(detailsStart + 'INSERT INTO `tms_vi_news_detail` VALUES'.length, sql.indexOf(';', detailsStart));
+
+    // Lấy nội dung chi tiết
+    const detailMap = new Map<number, string>();
+    let detailTuples = detailsStr.split(/\),\s*\r?\n\(/);
+    for (let t of detailTuples) {
+        t = t.trim().replace(/^\(/, '').replace(/\)[;,]?$/, '');
+        const commaIdx = t.indexOf(',');
+        if (commaIdx > 0) {
+            const id = parseInt(t.substring(0, commaIdx).trim());
+            if (!isNaN(id)) {
+                // Nội dung bodyhtml thường nằm ở cột thứ hai
+                const strRegex = /'((?:[^'\\]|\\.)*)'/g;
+                let sMatch;
+                let strings = [];
+                while ((sMatch = strRegex.exec(t)) !== null) {
+                    strings.push(sMatch[1].replace(/\\'/g, "'"));
+                }
+                detailMap.set(id, strings[0] || "");
+            }
+        }
+    }
+
+    // Lấy thông tin cơ bản
+    const articlesToImport = [];
+    let rowTuples = rowsStr.split(/\),\s*\r?\n\(/);
+    for (let t of rowTuples) {
+        t = t.trim().replace(/^\(/, '').replace(/\)[;,]?$/, '');
+        const parts = t.split(',');
+        if (parts.length > 1) {
+            const id = parseInt(parts[0].trim());
+            const catid = parseInt(parts[1].trim());
+            
+            const strRegex = /'((?:[^'\\]|\\.)*)'/g;
+            let sMatch;
+            let strings = [];
+            while ((sMatch = strRegex.exec(t)) !== null) {
+                strings.push(sMatch[1].replace(/\\'/g, "'"));
+            }
+            
+            if (!isNaN(id) && strings.length > 0) {
+                articlesToImport.push({
+                    id,
+                    catid,
+                    title: strings[strings.length - 1] || `Tin tức ${id}`, // Cột cuối thường là title trong trích xuất chuỗi
+                    bodyhtml: detailMap.get(id) || ""
+                });
+            }
+        }
+    }
+
+    // Lấy 200 bài mới nhất
+    articlesToImport.sort((a, b) => a.id - b.id);
+    const latestArticles = articlesToImport.slice(-200);
+    console.log(`✅ Đã chọn ${latestArticles.length} bài viết mới nhất để Import.`);
+
+    // ==========================================
+    // BƯỚC 4: HÀM XỬ LÝ HÌNH ẢNH & LEXICAL
+    // ==========================================
+    const mediaCache = new Map<string, any>();
+
+    async function processImage(imgSrc: string) {
+        if (mediaCache.has(imgSrc)) return mediaCache.get(imgSrc);
+
+        let relativeSrc = imgSrc.replace(/^\/+/, '');
+        let srcPath = path.join('C:\\Users\\SingPC\\public_html', relativeSrc.replace(/\//g, '\\'));
+        
+        if (fs.existsSync(srcPath)) {
+            try {
+                const stats = fs.statSync(srcPath);
+                const buffer = fs.readFileSync(srcPath);
+                const ext = path.extname(srcPath).toLowerCase();
+                const mimeType = ext === '.png' ? 'image/png' : ext === '.gif' ? 'image/gif' : 'image/jpeg';
+                const fileName = path.basename(srcPath);
+                
+                const mediaSearch = await payload.find({ collection: 'media', where: { filename: { equals: fileName } } });
+                if (mediaSearch.docs.length > 0) {
+                    mediaCache.set(imgSrc, mediaSearch.docs[0].id);
+                    return mediaSearch.docs[0].id;
+                } else {
+                    const mediaDoc = await payload.create({
+                        collection: 'media',
+                        data: { alt: 'Ảnh bài viết' },
+                        file: { data: buffer, mimetype: mimeType, name: `${Date.now()}_${fileName}`, size: stats.size }
+                    });
+                    mediaCache.set(imgSrc, mediaDoc.id);
+                    return mediaDoc.id;
+                }
+            } catch (e: any) { }
+        }
+        return null;
+    }
+
+    async function htmlToLexicalBlocks(rawHtml: string) {
+        let cleanHtml = rawHtml.replace(/\\"/g, '"').replace(/\r/g, '').replace(/\\n/g, '\n');
+        const root = parse(cleanHtml);
+        let blocks: any[] = [];
+        let currentParagraphChildren: any[] = [];
+        
+        function flushParagraph() {
+            if (currentParagraphChildren.length > 0) {
+                blocks.push({
+                    type: 'paragraph', format: '', indent: 0, version: 1,
+                    children: currentParagraphChildren
+                });
+                currentParagraphChildren = [];
+            }
+        }
+
+        async function walk(node: any, currentFormat: number = 0) {
+            if (node.nodeType === 3) {
+                let text = decodeHTMLEntities(node.text);
+                text = text.replace(/\n+/g, ' ').replace(/ {2,}/g, ' ');
+                if (text && text.trim().length > 0) {
+                    currentParagraphChildren.push({ mode: 'normal', type: 'text', text: text, format: currentFormat, version: 1 });
+                } else if (text === ' ' && currentParagraphChildren.length > 0) {
+                     const lastNode = currentParagraphChildren[currentParagraphChildren.length - 1];
+                     if (lastNode.type === 'text' && !lastNode.text.endsWith(' ')) {
+                         currentParagraphChildren.push({ mode: 'normal', type: 'text', text: ' ', format: currentFormat, version: 1 });
+                     }
+                }
+                return;
+            }
+
+            const tag = node.tagName ? node.tagName.toUpperCase() : '';
+            if (tag === 'BR') {
+                currentParagraphChildren.push({ type: 'linebreak', version: 1 });
+                return;
+            }
+
+            if (tag === 'IMG') {
+                flushParagraph();
+                const src = node.getAttribute('src');
+                if (src) {
+                    const mediaId = await processImage(src);
+                    if (mediaId) {
+                        blocks.push({ type: 'upload', relationTo: 'media', value: mediaId, version: 1 });
+                    }
+                }
+                return;
+            }
+
+            let isBlock = ['P', 'DIV', 'H1', 'H2', 'H3', 'H4', 'H5', 'H6', 'UL', 'OL', 'LI', 'TABLE', 'TR', 'TD', 'TH'].includes(tag);
+            if (isBlock) flushParagraph();
+
+            let format = currentFormat;
+            if (tag === 'B' || tag === 'STRONG') format |= 1;
+            if (tag === 'I' || tag === 'EM') format |= 2;
+            if (tag === 'S' || tag === 'STRIKE') format |= 4;
+            if (tag === 'U') format |= 8;
+
+            for (const child of node.childNodes) {
+                await walk(child, format);
+            }
+
+            if (isBlock) flushParagraph();
+        }
+
+        await walk(root);
+        flushParagraph();
+        return blocks;
+    }
+
+    // ==========================================
+    // BƯỚC 5: IMPORT BÀI VIẾT VÀO CMS
+    // ==========================================
+    console.log("🚀 Bắt đầu chuyển đổi hình ảnh, định dạng và import bài viết...");
+    let imported = 0;
+    const defaultCatId = catIdMap[nukeCategories[0]?.catid] || 1;
+
+    for (const article of latestArticles) {
+        let slug = generateSlug(article.title) || `tin-tuc-${article.id}`;
+        
+        let blocks = await htmlToLexicalBlocks(article.bodyhtml);
+        if (blocks.length === 0) {
+            blocks = [{
+                type: 'paragraph', format: '', indent: 0, version: 1,
+                children: [{ mode: 'normal', text: "(Chưa có nội dung chi tiết)", type: 'text', version: 1 }]
+            }];
+        }
+
+        const payloadCategoryId = catIdMap[article.catid] || defaultCatId;
+
+        const existing = await payload.find({ collection: 'articles', where: { slug: { equals: slug } } });
+        if (existing.docs.length > 0) {
+            // Update
+            await payload.update({
+                collection: 'articles',
+                id: existing.docs[0].id,
+                data: {
+                    category: payloadCategoryId,
+                    content: { root: { type: 'root', format: '', indent: 0, version: 1, children: blocks } } as any,
+                }
+            });
+        } else {
+            // Create
+            await payload.create({
+                collection: 'articles',
+                data: {
+                    title: article.title,
+                    slug: slug,
+                    description: decodeHTMLEntities(article.bodyhtml).substring(0, 150).replace(/<[^>]+>/g, '') + '...',
+                    category: payloadCategoryId,
+                    content: { root: { type: 'root', format: '', indent: 0, version: 1, children: blocks } } as any,
+                }
+            });
+        }
+        imported++;
+        if (imported % 20 === 0) {
+            console.log(`   ⏳ Đã import ${imported} / ${latestArticles.length} bài viết...`);
+        }
+    }
+
+    console.log("🎉 Hoàn tất! Quá trình Migration đã kết thúc thành công.");
+    process.exit(0);
+}
+
+runMigration().catch(console.error);

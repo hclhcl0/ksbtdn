@@ -1,0 +1,52 @@
+[
+  {
+    "catid": 1,
+    "title": "Tin tức - Sự kiện",
+    "alias": ""
+  },
+  {
+    "catid": 2,
+    "title": "Y học thường thức",
+    "alias": ""
+  },
+  {
+    "catid": 3,
+    "title": "Hội nghị - Tập huấn",
+    "alias": ""
+  },
+  {
+    "catid": 4,
+    "title": "Phòng chống dịch bệnh",
+    "alias": ""
+  },
+  {
+    "catid": 8,
+    "title": "Tiêm chủng vắc xin",
+    "alias": ""
+  },
+  {
+    "catid": 6,
+    "title": "Thành tựu y học",
+    "alias": ""
+  },
+  {
+    "catid": 7,
+    "title": "Các hoạt động khác",
+    "alias": ""
+  },
+  {
+    "catid": 9,
+    "title": "Bệnh không lây nhiễm",
+    "alias": ""
+  },
+  {
+    "catid": 11,
+    "title": "Chính sách pháp luật",
+    "alias": ""
+  },
+  {
+    "catid": 13,
+    "title": "Người tốt, việc tốt",
+    "alias": ""
+  }
+]

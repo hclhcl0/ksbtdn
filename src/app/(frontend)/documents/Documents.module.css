@@ -1,0 +1,62 @@
+.pageTitle {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--primary-dark);
+  margin-bottom: 0.5rem;
+  text-transform: uppercase;
+  border-bottom: 3px solid var(--secondary);
+  display: inline-block;
+  padding-bottom: 0.5rem;
+}
+
+.subtitle {
+  color: var(--text-muted);
+  margin-bottom: 2rem;
+  font-size: 1.125rem;
+}
+
+.tableWrapper {
+  background-color: var(--white);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  overflow-x: auto;
+  border: 1px solid var(--border);
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.table th, .table td {
+  padding: 1rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.table th {
+  background-color: var(--primary);
+  color: var(--white);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.table tr:last-child td {
+  border-bottom: none;
+}
+
+.table tbody tr:hover {
+  background-color: var(--bg-light);
+}
+
+.textCenter {
+  text-align: center;
+}
+
+.fontSemibold {
+  font-weight: 600;
+}
+
+.textPrimary {
+  color: var(--primary);
+}
