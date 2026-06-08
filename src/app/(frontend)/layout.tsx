@@ -8,6 +8,10 @@ import { BackToTop } from "@/components/BackToTop";
 import { getPayload } from "payload";
 import configPromise from "@payload-config";
 
+// Tất cả các trang trong route group này sẽ render động (không render tĩnh khi build)
+// để tránh lỗi database chưa được khởi tạo trong quá trình build
+export const dynamic = 'force-dynamic';
+
 const roboto = Roboto({
   weight: ['400', '500', '700'],
   subsets: ["latin", "vietnamese"],
