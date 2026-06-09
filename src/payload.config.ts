@@ -4,6 +4,7 @@ import { postgresAdapter } from '@payloadcms/db-postgres';
 import { lexicalEditor } from '@payloadcms/richtext-lexical';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { vercelBlobStorage } from '@payloadcms/storage-vercel-blob';
 
 // DATABASE_URI = custom Postgres URL
 // POSTGRES_URL = auto-injected by Vercel Postgres addon
@@ -52,6 +53,18 @@ export default buildConfig({
     Footer,
     Settings,
     BannerSettings,
+  ],
+  plugins: [
+    ...(process.env.BLOB_READ_WRITE_TOKEN
+      ? [
+          vercelBlobStorage({
+            collections: {
+              media: true,
+            },
+            token: process.env.BLOB_READ_WRITE_TOKEN,
+          }),
+        ]
+      : []),
   ],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || 'YOUR-SUPER-SECRET-KEY',
