@@ -1,8 +1,12 @@
 import React from 'react';
 import { RichText } from '@payloadcms/richtext-lexical/react';
+import Script from 'next/script';
+
+import { UploadBlock } from './UploadBlock';
 
 export const jsxConverters = ({ defaultConverters }: any) => ({
   ...defaultConverters,
+  upload: ({ node }: any) => <UploadBlock node={node} />,
   blocks: {
     columnsBlock: ({ node }: any) => {
       const { layout, col1, col2, col3 } = node.fields;
@@ -108,6 +112,44 @@ export const jsxConverters = ({ defaultConverters }: any) => ({
                 <span className="ml-1 group-hover:translate-x-1 transition-transform">→</span>
               </a>
             )}
+          </div>
+        </div>
+      );
+    },
+    tiktokBlock: ({ node }: any) => {
+      const { videoId, videoUrl, maxWidth, alignment } = node.fields;
+      if (!videoId) return null;
+
+      // Tính toán CSS để căn lề
+      let containerStyle: React.CSSProperties = {
+        display: 'flex',
+        width: '100%',
+        margin: '2rem 0',
+      };
+      
+      if (alignment === 'left') {
+        containerStyle.justifyContent = 'flex-start';
+      } else if (alignment === 'right') {
+        containerStyle.justifyContent = 'flex-end';
+      } else {
+        containerStyle.justifyContent = 'center';
+      }
+
+      return (
+        <div style={containerStyle}>
+          <div style={{ width: '100%', maxWidth: `${maxWidth || 320}px` }}>
+            <blockquote
+              className="tiktok-embed"
+              cite={videoUrl}
+              data-video-id={videoId}
+              data-embed-type="video"
+              style={{ maxWidth: '100%', minWidth: '100%', border: 'none', margin: 0, padding: 0 }}
+            >
+              <section>
+                <a target="_blank" href={videoUrl} rel="noopener noreferrer">Xem TikTok</a>
+              </section>
+            </blockquote>
+            <Script src="https://www.tiktok.com/embed.js" strategy="lazyOnload" />
           </div>
         </div>
       );

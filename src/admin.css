@@ -1,14 +1,10 @@
-/* Override Lexical Editor fonts and pasted inline styles to ensure consistent Vietnamese display */
-[contenteditable="true"],
-[contenteditable="true"] *,
-.lexical-editor,
-.lexical-editor * {
-  font-family: 'Inter', 'Roboto', 'Arial', sans-serif !important;
-  font-size: 16px;
-  line-height: 1.6;
+.ContentEditable__root {
+  font-family: inherit !important;
 }
 
-/* Force paragraph spacing and standard font even when copy-pasting from Word */
-[contenteditable="true"] p {
-  margin-bottom: 1rem;
+/* Optional: Additional Lexical typography fixes */
+.ContentEditable__root p, 
+.ContentEditable__root span, 
+.ContentEditable__root div {
+  font-family: inherit !important;
 }

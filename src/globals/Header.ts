@@ -11,7 +11,7 @@ export const Header: GlobalConfig = {
       name: 'siteName',
       type: 'text',
       required: true,
-      defaultValue: 'Cổng thông tin điện tử',
+      defaultValue: 'Trung tâm Kiểm soát Bệnh tật Thành phố Đà Nẵng',
       label: 'Tên Website',
     },
     {
@@ -29,7 +29,7 @@ export const Header: GlobalConfig = {
           name: 'logoHeight',
           type: 'number',
           label: 'Chiều cao Logo (px)',
-          defaultValue: 52,
+          defaultValue: 80,
           min: 20,
           max: 200,
           admin: {
@@ -75,6 +75,7 @@ export const Header: GlobalConfig = {
           name: 'siteTagline',
           type: 'text',
           label: 'Slogan / Tagline (bên dưới tên website)',
+          defaultValue: 'Phòng bệnh chủ động-vươn rộng tương lai',
           admin: {
             description: 'Dòng phụ nhỏ hiển thị bên dưới tên website. Để trống nếu không cần.',
             condition: (data) => data?.logoCustomization?.showSiteName !== false,
@@ -113,7 +114,7 @@ export const Header: GlobalConfig = {
           name: 'logoHoverEffect',
           type: 'select',
           label: 'Hiệu ứng rê chuột vào Logo (Hover)',
-          defaultValue: 'scale-tilt',
+          defaultValue: 'bounce',
           options: [
             { label: 'Không có hiệu ứng', value: 'none' },
             { label: 'Phóng to & nghiêng (Scale & Tilt)', value: 'scale-tilt' },
@@ -138,7 +139,7 @@ export const Header: GlobalConfig = {
           name: 'position',
           type: 'select',
           label: 'Vị trí đặt ô Tìm kiếm',
-          defaultValue: 'hotline',
+          defaultValue: 'navbar',
           options: [
             { label: '⬇ Trong thanh Hotline (Mặc định)', value: 'hotline' },
             { label: '➡ Trên thanh điều hướng chính (MainMenu)', value: 'navbar' },
@@ -151,7 +152,7 @@ export const Header: GlobalConfig = {
           name: 'style',
           type: 'select',
           label: 'Cách hiển thị',
-          defaultValue: 'inline',
+          defaultValue: 'popup',
           options: [
             { label: '🔍 Ô nhập trực tiếp (Inline Input)', value: 'inline' },
             { label: '📱 Nút icon kích hoạt Popup (Search Popup)', value: 'popup' },
@@ -171,57 +172,7 @@ export const Header: GlobalConfig = {
         }
       ]
     },
-    {
-      name: 'menuPosition',
-      type: 'select',
-      label: 'Vị trí Menu điều hướng',
-      defaultValue: 'right',
-      options: [
-        { label: '➡ Bên phải Logo (cùng hàng)', value: 'right' },
-        { label: '⬇ Thanh riêng bên dưới Logo', value: 'below' },
-        { label: '⬅ Bên trái Logo (cùng hàng)', value: 'left' },
-      ],
-      admin: {
-        description: 'Chọn nơi hiển thị thanh menu điều hướng chính.',
-      }
-    },
-    {
-      name: 'menuItems',
-      type: 'array',
-      label: 'Menu Điều Hướng',
-      fields: [
-        {
-          name: 'label',
-          type: 'text',
-          required: true,
-          label: 'Tên Menu (Ví dụ: Giới thiệu)',
-        },
-        {
-          name: 'url',
-          type: 'text',
-          label: 'Đường dẫn (để trống nếu chỉ là tiêu đề nhóm)',
-        },
-        {
-          name: 'subItems',
-          type: 'array',
-          label: 'Menu Con (Dropdown)',
-          fields: [
-            {
-              name: 'label',
-              type: 'text',
-              required: true,
-              label: 'Tên mục con',
-            },
-            {
-              name: 'url',
-              type: 'text',
-              required: true,
-              label: 'Đường dẫn',
-            },
-          ],
-        },
-      ],
-    },
+
     {
       name: 'hotline',
       type: 'group',
@@ -231,19 +182,19 @@ export const Header: GlobalConfig = {
           name: 'phone',
           type: 'text',
           label: 'Số điện thoại',
-          defaultValue: '0909 408 895',
+          defaultValue: '0236 3890 407',
         },
         {
           name: 'actionLink',
           type: 'text',
           label: 'Link Nút "Đặt câu hỏi"',
-          defaultValue: 'https://facebook.com/ksbthcm',
+          defaultValue: '#',
         },
         {
           name: 'position',
           type: 'select',
           label: 'Vị trí Hotline Bar',
-          defaultValue: 'below-nav',
+          defaultValue: 'topbar',
           options: [
             { label: '⬇ Dưới thanh điều hướng (Mặc định)', value: 'below-nav' },
             { label: '⬆ Trên thanh điều hướng (Dưới TopBar)', value: 'above-nav' },

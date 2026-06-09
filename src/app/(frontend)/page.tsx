@@ -31,8 +31,6 @@ export default async function HomePage() {
       {homeCategories.map((item: any, index: number) => {
         if (!item.category) return null;
         
-        // category could be string ID or populated object depending on depth.
-        // Since depth=1, it should be an object.
         const catObj = typeof item.category === 'object' ? item.category : null;
         const catId = catObj ? catObj.id : item.category;
         const catName = catObj ? catObj.name : 'Chuyên mục';
@@ -48,6 +46,7 @@ export default async function HomePage() {
           />
         );
       })}
+
     </>
   )
 }

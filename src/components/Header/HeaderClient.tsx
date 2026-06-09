@@ -300,7 +300,6 @@ export const HeaderClient = ({ menuItems, menuPosition, logoUrl, logoConfig, sea
         </div>
         <nav>
           <ul>
-            <li><Link href="/" onClick={() => setMobileOpen(false)} className={pathname === '/' ? styles.activeItem : ''}>Trang chủ</Link></li>
             {menuItems.map((item, idx) => {
               const hasDropdown = item.subItems && item.subItems.length > 0;
               const key = item.id || String(idx);
@@ -420,9 +419,6 @@ function NavMenu({ menuItems, pathname, styles, openDropdown, setOpenDropdown, i
   return (
     <nav className={styles.navMenu}>
       <ul>
-        <li className={pathname === '/' ? styles.activeItem : ''}>
-          <a href="/">Trang chủ</a>
-        </li>
         {menuItems.map((item: any, idx: number) => {
           const hasDropdown = item.subItems && item.subItems.length > 0;
           const key = item.id || String(idx);

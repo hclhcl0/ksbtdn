@@ -1,6 +1,7 @@
 import type { CollectionConfig } from 'payload';
 import { lexicalEditor, FixedToolbarFeature, HeadingFeature, AlignFeature, HTMLConverterFeature, BlocksFeature } from '@payloadcms/richtext-lexical';
 import { VideoBlock } from '../blocks/VideoBlock.ts';
+import { TikTokBlock } from '../blocks/TikTokBlock.ts';
 import { PDFBlock } from '../blocks/PDFBlock.ts';
 import { GalleryBlock } from '../blocks/GalleryBlock.ts';
 import { CalloutBlock } from '../blocks/CalloutBlock.ts';
@@ -149,7 +150,7 @@ export const Articles: CollectionConfig = {
           HeadingFeature({ enabledHeadingSizes: ['h2', 'h3', 'h4', 'h5', 'h6'] }),
           AlignFeature(),
           HTMLConverterFeature({}),
-          BlocksFeature({ blocks: [VideoBlock, PDFBlock, GalleryBlock, CalloutBlock, ButtonBlock, RelatedArticlesBlock, ColumnsBlock] }),
+          BlocksFeature({ blocks: [VideoBlock, TikTokBlock, PDFBlock, GalleryBlock, CalloutBlock, ButtonBlock, RelatedArticlesBlock, ColumnsBlock] }),
         ]
       }),
       required: true,

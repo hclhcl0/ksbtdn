@@ -10,6 +10,8 @@ import { RichText } from '@payloadcms/richtext-lexical/react';
 import { headers } from 'next/headers';
 
 import { jsxConverters } from '@/components/LexicalConverters';
+import { ArticleReaderTools } from '@/components/ArticleReaderTools';
+import { SidebarRenderer } from '@/components/SidebarRenderer';
 
 interface PageParams {
   params: Promise<{
@@ -101,19 +103,46 @@ export default async function ArticlePage({ params, searchParams }: PageParams) 
     }
   });
 
+  // Fetch sidebar configurations from settings
+  let sidebarWidgets: any[] = [];
+  try {
+    const globalSettings = await payload.findGlobal({ slug: 'settings', depth: 2 });
+    sidebarWidgets = (globalSettings as any).sidebarWidgets || [];
+  } catch (err) {
+    console.error("Failed to fetch sidebar settings:", err);
+  }
+
+  // Fallback default widgets if none are configured in CMS
+  if (sidebarWidgets.length === 0) {
+    sidebarWidgets = [
+      {
+        id: 'default-categories',
+        blockType: 'categoriesWidget',
+        title: 'Chuyên mục',
+        limit: 10
+      },
+      {
+        id: 'default-recent',
+        blockType: 'recentArticlesWidget',
+        title: 'Tin mới cập nhật',
+        limit: 5
+      }
+    ];
+  }
+
   return (
     <div className="container mx-auto px-4 py-8 max-w-7xl">
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-4">
         
         {/* Main Content */}
-        <article className="lg:col-span-3 bg-white rounded-xl shadow-sm border border-gray-100 p-6 md:p-10">
+        <article className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 md:py-10 md:px-14 overflow-hidden min-w-0">
           <div className="flex items-center text-sm text-gray-500 mb-6 overflow-x-auto whitespace-nowrap pb-2">
              <Link href="/" className="hover:text-gov-primary transition-colors">Trang chủ</Link>
              <span className="mx-2 flex-shrink-0">/</span>
              <Link href={`/chuyen-muc/${catSlug}`} className="hover:text-gov-primary transition-colors">{catName}</Link>
           </div>
           
-          <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900 mb-6 leading-tight">
+          <h1 className="text-xl md:text-2xl lg:text-3xl font-bold text-gray-900 mb-6 leading-tight break-words">
              {article.title}
           </h1>
           
@@ -128,8 +157,10 @@ export default async function ArticlePage({ params, searchParams }: PageParams) 
                {catName}
              </Link>
           </div>
+
+          <ArticleReaderTools />
           
-          <div className="prose prose-lg max-w-none prose-headings:text-gov-primary prose-a:text-gov-secondary hover:prose-a:text-gov-primary prose-img:rounded-xl">
+          <div className="prose prose-lg max-w-none break-words prose-headings:text-gov-primary prose-a:text-gov-secondary hover:prose-a:text-gov-primary prose-img:rounded-xl w-full overflow-hidden">
              {article.content ? (
                 <RichText data={article.content} converters={jsxConverters} />
              ) : (
@@ -139,35 +170,11 @@ export default async function ArticlePage({ params, searchParams }: PageParams) 
         </article>
 
         {/* Sidebar */}
-        <aside className="lg:col-span-1 space-y-8">
-          <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-            <h3 className="text-lg font-bold text-gov-primary mb-4 border-b-2 border-gov-secondary pb-2 inline-block">Chuyên mục</h3>
-            <ul className="space-y-3">
-              {categories.map(cat => (
-                <li key={cat.id}>
-                  <Link href={`/chuyen-muc/${cat.slug}`} className="text-gray-600 hover:text-gov-primary font-medium flex items-center transition-colors">
-                    <span className="w-1.5 h-1.5 rounded-full bg-gov-secondary mr-2"></span>
-                    {cat.name}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-          
-          <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-            <h3 className="text-lg font-bold text-gov-primary mb-4 border-b-2 border-gov-secondary pb-2 inline-block">Tin mới cập nhật</h3>
-            <ul className="space-y-4">
-              {latestArticles.map(item => (
-                <li key={item.id} className="group border-b border-gray-50 pb-4 last:border-0 last:pb-0">
-                  <Link href={`/bai-viet/${item.slug || item.id}`} className="block">
-                    <span className="text-sm font-bold text-gray-800 group-hover:text-gov-primary transition-colors line-clamp-3 mb-1">{item.title}</span>
-                    <span className="text-xs text-gray-500 flex items-center mt-2"><Calendar size={12} className="mr-1"/> {new Date(item.createdAt).toLocaleDateString('vi-VN')}</span>
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </aside>
+        <SidebarRenderer
+          widgets={sidebarWidgets}
+          latestArticles={latestArticles}
+          categories={categories}
+        />
       </div>
     </div>
   );

@@ -27,8 +27,9 @@ export const Header = async () => {
   try {
     const payload = await getPayload({ config: configPromise });
     const globalHeader = await payload.findGlobal({ slug: 'header', depth: 2 });
-    menuItems = globalHeader.menuItems || [];
-    menuPosition = (globalHeader as any).menuPosition || 'right';
+    const globalMenu = await payload.findGlobal({ slug: 'main-menu', depth: 2 }) as any;
+    menuItems = globalMenu?.menuItems || [];
+    menuPosition = globalMenu?.menuPosition || 'right';
     const lc = (globalHeader as any).logoCustomization || {};
     logoConfig = {
       height: lc.logoHeight || 52,

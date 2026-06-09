@@ -19,10 +19,14 @@ import { Pages } from './collections/Pages.ts';
 import { Banners } from './collections/Banners.ts';
 import { Documents } from './collections/Documents.ts';
 import { Header } from './globals/Header.ts';
+import { MainMenu } from './globals/MainMenu.ts';
 import { Sidebar } from './globals/Sidebar.ts';
 import { Footer } from './globals/Footer.ts';
 import { Settings } from './globals/Settings.ts';
 import { BannerSettings } from './globals/BannerSettings.ts';
+import { WorkSchedules } from './collections/WorkSchedules.ts';
+import { Videos } from './collections/Videos.ts';
+import { VideoChannels } from './collections/VideoChannels.ts';
 
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
@@ -33,7 +37,8 @@ export default buildConfig({
     css: path.resolve(dirname, 'admin.css'),
     components: {
       beforeDashboard: [
-        '@/app/(payload)/admin/components/AuthorWelcome.tsx#AuthorWelcome'
+        '@/app/(payload)/admin/components/AuthorWelcome.tsx#AuthorWelcome',
+        '@/app/(payload)/admin/components/YouTubeSyncButton.tsx#YouTubeSyncButton',
       ]
     }
   },
@@ -46,9 +51,13 @@ export default buildConfig({
     Pages,
     Banners,
     Documents,
+    WorkSchedules,
+    VideoChannels,
+    Videos,
   ],
   globals: [
     Header,
+    MainMenu,
     Sidebar,
     Footer,
     Settings,

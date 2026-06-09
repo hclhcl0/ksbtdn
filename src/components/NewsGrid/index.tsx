@@ -51,8 +51,7 @@ async function getNewsSettings() {
 
 export const NewsGrid = async ({ categoryId, categoryName, categorySlug, limitOverride }: NewsGridProps) => {
   const { limit: defaultRows, desktopCols, mobileCols } = await getNewsSettings();
-  const rows = limitOverride || defaultRows;
-  const actualLimit = rows * desktopCols;
+  const actualLimit = limitOverride || defaultRows || 8;
   const articles = await getLatestArticles(actualLimit, categoryId);
   
   const title = categoryName ? categoryName.toUpperCase() : 'THÔNG TIN MỚI NHẤT';

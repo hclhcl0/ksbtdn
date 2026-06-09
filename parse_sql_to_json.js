@@ -73,8 +73,11 @@ async function extract() {
                 bodyhtml = detailStrings.reduce((a, b) => a.length > b.length ? a : b, "");
             }
             
+            let catid = parseInt(row.content.split(',')[1].trim());
+
             finalData.push({
                 id: row.id,
+                catid: catid,
                 title,
                 slug: alias,
                 description: hometext.replace(/<[^>]+>/g, '').trim(),
