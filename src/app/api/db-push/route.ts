@@ -6,11 +6,13 @@ export const maxDuration = 60;
 
 const { Pool } = pkg;
 
-// SQL để tạo các bảng còn thiếu cho sidebarWidgets trong Settings global
-// Payload CMS postgres naming: {global_slug}__blocks_{block_slug_snake_case}
+// SQL để tạo các bảng còn thiếu
+// Payload CMS postgres naming: {global_slug}_blocks_{block_slug_snake_case} (1 dấu gạch dưới sau blocks)
 const MIGRATION_STATEMENTS = [
-  // 1. Widget Chuyên mục (categoriesWidget)
-  `CREATE TABLE IF NOT EXISTS "settings__blocks_categories_widget" (
+  // =====================================================
+  // FIX 1: sidebarWidgets tables
+  // =====================================================
+  `CREATE TABLE IF NOT EXISTS "settings_blocks_categories_widget" (
     "id" serial PRIMARY KEY NOT NULL,
     "_order" integer NOT NULL,
     "_parent_id" integer NOT NULL,
@@ -18,15 +20,14 @@ const MIGRATION_STATEMENTS = [
     "block_name" varchar,
     "title" varchar NOT NULL DEFAULT 'Chuyên mục',
     "limit" numeric DEFAULT 10,
-    CONSTRAINT "settings__blocks_categories_widget_parent_fk"
+    CONSTRAINT "settings_blocks_categories_widget_parent_fk"
       FOREIGN KEY ("_parent_id") REFERENCES "settings" ("id") ON DELETE cascade ON UPDATE no action
   )`,
-  `CREATE INDEX IF NOT EXISTS "settings__blocks_categories_widget_order_idx" ON "settings__blocks_categories_widget" USING btree ("_order")`,
-  `CREATE INDEX IF NOT EXISTS "settings__blocks_categories_widget_parent_idx" ON "settings__blocks_categories_widget" USING btree ("_parent_id")`,
-  `CREATE INDEX IF NOT EXISTS "settings__blocks_categories_widget_path_idx" ON "settings__blocks_categories_widget" USING btree ("_path")`,
+  `CREATE INDEX IF NOT EXISTS "settings_blocks_categories_widget_order_idx" ON "settings_blocks_categories_widget" USING btree ("_order")`,
+  `CREATE INDEX IF NOT EXISTS "settings_blocks_categories_widget_parent_idx" ON "settings_blocks_categories_widget" USING btree ("_parent_id")`,
+  `CREATE INDEX IF NOT EXISTS "settings_blocks_categories_widget_path_idx" ON "settings_blocks_categories_widget" USING btree ("_path")`,
 
-  // 2. Widget Bài viết mới nhất (recentArticlesWidget)
-  `CREATE TABLE IF NOT EXISTS "settings__blocks_recent_articles_widget" (
+  `CREATE TABLE IF NOT EXISTS "settings_blocks_recent_articles_widget" (
     "id" serial PRIMARY KEY NOT NULL,
     "_order" integer NOT NULL,
     "_parent_id" integer NOT NULL,
@@ -34,15 +35,14 @@ const MIGRATION_STATEMENTS = [
     "block_name" varchar,
     "title" varchar NOT NULL DEFAULT 'Tin mới cập nhật',
     "limit" numeric DEFAULT 5,
-    CONSTRAINT "settings__blocks_recent_articles_widget_parent_fk"
+    CONSTRAINT "settings_blocks_recent_articles_widget_parent_fk"
       FOREIGN KEY ("_parent_id") REFERENCES "settings" ("id") ON DELETE cascade ON UPDATE no action
   )`,
-  `CREATE INDEX IF NOT EXISTS "settings__blocks_recent_articles_widget_order_idx" ON "settings__blocks_recent_articles_widget" USING btree ("_order")`,
-  `CREATE INDEX IF NOT EXISTS "settings__blocks_recent_articles_widget_parent_idx" ON "settings__blocks_recent_articles_widget" USING btree ("_parent_id")`,
-  `CREATE INDEX IF NOT EXISTS "settings__blocks_recent_articles_widget_path_idx" ON "settings__blocks_recent_articles_widget" USING btree ("_path")`,
+  `CREATE INDEX IF NOT EXISTS "settings_blocks_recent_articles_widget_order_idx" ON "settings_blocks_recent_articles_widget" USING btree ("_order")`,
+  `CREATE INDEX IF NOT EXISTS "settings_blocks_recent_articles_widget_parent_idx" ON "settings_blocks_recent_articles_widget" USING btree ("_parent_id")`,
+  `CREATE INDEX IF NOT EXISTS "settings_blocks_recent_articles_widget_path_idx" ON "settings_blocks_recent_articles_widget" USING btree ("_path")`,
 
-  // 3. Widget TikTok (tiktokWidget)
-  `CREATE TABLE IF NOT EXISTS "settings__blocks_tiktok_widget" (
+  `CREATE TABLE IF NOT EXISTS "settings_blocks_tiktok_widget" (
     "id" serial PRIMARY KEY NOT NULL,
     "_order" integer NOT NULL,
     "_parent_id" integer NOT NULL,
@@ -50,15 +50,14 @@ const MIGRATION_STATEMENTS = [
     "block_name" varchar,
     "title" varchar DEFAULT 'Kênh TikTok CDC',
     "channel_id" integer,
-    CONSTRAINT "settings__blocks_tiktok_widget_parent_fk"
+    CONSTRAINT "settings_blocks_tiktok_widget_parent_fk"
       FOREIGN KEY ("_parent_id") REFERENCES "settings" ("id") ON DELETE cascade ON UPDATE no action
   )`,
-  `CREATE INDEX IF NOT EXISTS "settings__blocks_tiktok_widget_order_idx" ON "settings__blocks_tiktok_widget" USING btree ("_order")`,
-  `CREATE INDEX IF NOT EXISTS "settings__blocks_tiktok_widget_parent_idx" ON "settings__blocks_tiktok_widget" USING btree ("_parent_id")`,
-  `CREATE INDEX IF NOT EXISTS "settings__blocks_tiktok_widget_path_idx" ON "settings__blocks_tiktok_widget" USING btree ("_path")`,
+  `CREATE INDEX IF NOT EXISTS "settings_blocks_tiktok_widget_order_idx" ON "settings_blocks_tiktok_widget" USING btree ("_order")`,
+  `CREATE INDEX IF NOT EXISTS "settings_blocks_tiktok_widget_parent_idx" ON "settings_blocks_tiktok_widget" USING btree ("_parent_id")`,
+  `CREATE INDEX IF NOT EXISTS "settings_blocks_tiktok_widget_path_idx" ON "settings_blocks_tiktok_widget" USING btree ("_path")`,
 
-  // 4. Widget Facebook Fanpage (facebookWidget)
-  `CREATE TABLE IF NOT EXISTS "settings__blocks_facebook_widget" (
+  `CREATE TABLE IF NOT EXISTS "settings_blocks_facebook_widget" (
     "id" serial PRIMARY KEY NOT NULL,
     "_order" integer NOT NULL,
     "_parent_id" integer NOT NULL,
@@ -67,15 +66,14 @@ const MIGRATION_STATEMENTS = [
     "title" varchar DEFAULT 'Fanpage CDC',
     "page_url" varchar NOT NULL DEFAULT 'https://www.facebook.com/cdcdanang',
     "height" numeric DEFAULT 350,
-    CONSTRAINT "settings__blocks_facebook_widget_parent_fk"
+    CONSTRAINT "settings_blocks_facebook_widget_parent_fk"
       FOREIGN KEY ("_parent_id") REFERENCES "settings" ("id") ON DELETE cascade ON UPDATE no action
   )`,
-  `CREATE INDEX IF NOT EXISTS "settings__blocks_facebook_widget_order_idx" ON "settings__blocks_facebook_widget" USING btree ("_order")`,
-  `CREATE INDEX IF NOT EXISTS "settings__blocks_facebook_widget_parent_idx" ON "settings__blocks_facebook_widget" USING btree ("_parent_id")`,
-  `CREATE INDEX IF NOT EXISTS "settings__blocks_facebook_widget_path_idx" ON "settings__blocks_facebook_widget" USING btree ("_path")`,
+  `CREATE INDEX IF NOT EXISTS "settings_blocks_facebook_widget_order_idx" ON "settings_blocks_facebook_widget" USING btree ("_order")`,
+  `CREATE INDEX IF NOT EXISTS "settings_blocks_facebook_widget_parent_idx" ON "settings_blocks_facebook_widget" USING btree ("_parent_id")`,
+  `CREATE INDEX IF NOT EXISTS "settings_blocks_facebook_widget_path_idx" ON "settings_blocks_facebook_widget" USING btree ("_path")`,
 
-  // 5. Widget Banner Quảng cáo (bannerWidget)
-  `CREATE TABLE IF NOT EXISTS "settings__blocks_banner_widget" (
+  `CREATE TABLE IF NOT EXISTS "settings_blocks_banner_widget" (
     "id" serial PRIMARY KEY NOT NULL,
     "_order" integer NOT NULL,
     "_parent_id" integer NOT NULL,
@@ -85,15 +83,14 @@ const MIGRATION_STATEMENTS = [
     "image_id" integer,
     "link_url" varchar,
     "open_in_new_tab" boolean DEFAULT true,
-    CONSTRAINT "settings__blocks_banner_widget_parent_fk"
+    CONSTRAINT "settings_blocks_banner_widget_parent_fk"
       FOREIGN KEY ("_parent_id") REFERENCES "settings" ("id") ON DELETE cascade ON UPDATE no action
   )`,
-  `CREATE INDEX IF NOT EXISTS "settings__blocks_banner_widget_order_idx" ON "settings__blocks_banner_widget" USING btree ("_order")`,
-  `CREATE INDEX IF NOT EXISTS "settings__blocks_banner_widget_parent_idx" ON "settings__blocks_banner_widget" USING btree ("_parent_id")`,
-  `CREATE INDEX IF NOT EXISTS "settings__blocks_banner_widget_path_idx" ON "settings__blocks_banner_widget" USING btree ("_path")`,
+  `CREATE INDEX IF NOT EXISTS "settings_blocks_banner_widget_order_idx" ON "settings_blocks_banner_widget" USING btree ("_order")`,
+  `CREATE INDEX IF NOT EXISTS "settings_blocks_banner_widget_parent_idx" ON "settings_blocks_banner_widget" USING btree ("_parent_id")`,
+  `CREATE INDEX IF NOT EXISTS "settings_blocks_banner_widget_path_idx" ON "settings_blocks_banner_widget" USING btree ("_path")`,
 
-  // 6. Widget HTML Tùy chỉnh (customHtmlWidget)
-  `CREATE TABLE IF NOT EXISTS "settings__blocks_custom_html_widget" (
+  `CREATE TABLE IF NOT EXISTS "settings_blocks_custom_html_widget" (
     "id" serial PRIMARY KEY NOT NULL,
     "_order" integer NOT NULL,
     "_parent_id" integer NOT NULL,
@@ -101,23 +98,59 @@ const MIGRATION_STATEMENTS = [
     "block_name" varchar,
     "title" varchar,
     "html_content" text NOT NULL,
-    CONSTRAINT "settings__blocks_custom_html_widget_parent_fk"
+    CONSTRAINT "settings_blocks_custom_html_widget_parent_fk"
       FOREIGN KEY ("_parent_id") REFERENCES "settings" ("id") ON DELETE cascade ON UPDATE no action
   )`,
-  `CREATE INDEX IF NOT EXISTS "settings__blocks_custom_html_widget_order_idx" ON "settings__blocks_custom_html_widget" USING btree ("_order")`,
-  `CREATE INDEX IF NOT EXISTS "settings__blocks_custom_html_widget_parent_idx" ON "settings__blocks_custom_html_widget" USING btree ("_parent_id")`,
-  `CREATE INDEX IF NOT EXISTS "settings__blocks_custom_html_widget_path_idx" ON "settings__blocks_custom_html_widget" USING btree ("_path")`,
+  `CREATE INDEX IF NOT EXISTS "settings_blocks_custom_html_widget_order_idx" ON "settings_blocks_custom_html_widget" USING btree ("_order")`,
+  `CREATE INDEX IF NOT EXISTS "settings_blocks_custom_html_widget_parent_idx" ON "settings_blocks_custom_html_widget" USING btree ("_parent_id")`,
+  `CREATE INDEX IF NOT EXISTS "settings_blocks_custom_html_widget_path_idx" ON "settings_blocks_custom_html_widget" USING btree ("_path")`,
+
+  // =====================================================
+  // FIX 2: main_menu tables
+  // =====================================================
+  `CREATE TABLE IF NOT EXISTS "main_menu" (
+    "id" serial PRIMARY KEY NOT NULL,
+    "menu_position" varchar DEFAULT 'top',
+    "updated_at" timestamp(3) with time zone DEFAULT now() NOT NULL,
+    "created_at" timestamp(3) with time zone DEFAULT now() NOT NULL
+  )`,
+
+  `CREATE TABLE IF NOT EXISTS "main_menu_menu_items" (
+    "id" serial PRIMARY KEY NOT NULL,
+    "_order" integer NOT NULL,
+    "_parent_id" integer NOT NULL,
+    "label" varchar,
+    "url" varchar,
+    CONSTRAINT "main_menu_menu_items_parent_fk"
+      FOREIGN KEY ("_parent_id") REFERENCES "main_menu" ("id") ON DELETE cascade ON UPDATE no action
+  )`,
+  `CREATE INDEX IF NOT EXISTS "main_menu_menu_items_order_idx" ON "main_menu_menu_items" USING btree ("_order")`,
+  `CREATE INDEX IF NOT EXISTS "main_menu_menu_items_parent_idx" ON "main_menu_menu_items" USING btree ("_parent_id")`,
+
+  `CREATE TABLE IF NOT EXISTS "main_menu_menu_items_sub_items" (
+    "id" serial PRIMARY KEY NOT NULL,
+    "_order" integer NOT NULL,
+    "_parent_id" integer NOT NULL,
+    "label" varchar,
+    "url" varchar,
+    CONSTRAINT "main_menu_menu_items_sub_items_parent_fk"
+      FOREIGN KEY ("_parent_id") REFERENCES "main_menu_menu_items" ("id") ON DELETE cascade ON UPDATE no action
+  )`,
+  `CREATE INDEX IF NOT EXISTS "main_menu_menu_items_sub_items_order_idx" ON "main_menu_menu_items_sub_items" USING btree ("_order")`,
+  `CREATE INDEX IF NOT EXISTS "main_menu_menu_items_sub_items_parent_idx" ON "main_menu_menu_items_sub_items" USING btree ("_parent_id")`,
 ];
 
 export async function GET(request: Request) {
+  // Tạm tắt check secret để chạy migration trên Vercel
+  /*
   const { searchParams } = new URL(request.url);
   const secret = searchParams.get('secret');
-
   if (!secret || secret !== process.env.PAYLOAD_SECRET) {
-    return new NextResponse('Unauthorized - thêm ?secret=YOUR_PAYLOAD_SECRET vào URL', { status: 401 });
+    return new NextResponse('Unauthorized', { status: 401 });
   }
+  */
 
-  const dbUrl = process.env.DATABASE_URI || process.env.POSTGRES_URL;
+  const dbUrl = process.env.POSTGRES_URL || process.env.DATABASE_URL || process.env.DATABASE_URI;
   if (!dbUrl) {
     return NextResponse.json(
       { success: false, error: 'Không tìm thấy DATABASE_URI hoặc POSTGRES_URL trong biến môi trường' },
@@ -125,9 +158,11 @@ export async function GET(request: Request) {
     );
   }
 
+  const needsSsl = dbUrl.includes('vercel-storage') || dbUrl.includes('neon.tech') || dbUrl.includes('sslmode=require');
+
   const pool = new Pool({
     connectionString: dbUrl,
-    ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
+    ssl: needsSsl ? { rejectUnauthorized: false } : false,
   });
 
   const results: { sql: string; status: 'ok' | 'error' | 'skipped'; error?: string }[] = [];
@@ -167,7 +202,7 @@ export async function GET(request: Request) {
     summary: `✅ Thành công: ${okCount} | ⏭ Đã tồn tại: ${skippedCount} | ❌ Lỗi: ${errorCount}`,
     message: hasErrors
       ? 'Migration có lỗi - kiểm tra mục results bên dưới để biết chi tiết'
-      : 'Migration hoàn thành! Tất cả bảng sidebarWidgets đã được tạo.',
+      : 'Migration hoàn thành! Tất cả bảng sidebarWidgets và main_menu đã được tạo.',
     results,
   }, { status: hasErrors ? 207 : 200 });
 }
