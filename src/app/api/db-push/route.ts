@@ -141,14 +141,11 @@ const MIGRATION_STATEMENTS = [
 ];
 
 export async function GET(request: Request) {
-  // Tạm tắt check secret để chạy migration trên Vercel
-  /*
   const { searchParams } = new URL(request.url);
   const secret = searchParams.get('secret');
   if (!secret || secret !== process.env.PAYLOAD_SECRET) {
     return new NextResponse('Unauthorized', { status: 401 });
   }
-  */
 
   const dbUrl = process.env.POSTGRES_URL || process.env.DATABASE_URL || process.env.DATABASE_URI;
   if (!dbUrl) {
