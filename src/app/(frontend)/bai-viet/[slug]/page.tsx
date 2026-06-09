@@ -44,7 +44,7 @@ export async function generateMetadata({ params, searchParams }: PageParams) {
   if (docs.length === 0) return {};
   
   return {
-    title: `${docs[0].title} | HCDC`,
+    title: `${docs[0].title} | CDC Đà Nẵng`,
   };
 }
 

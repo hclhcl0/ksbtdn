@@ -7,7 +7,7 @@ import { FileText, Download } from 'lucide-react';
 import styles from './Documents.module.css';
 
 export const metadata = {
-  title: 'Văn bản chỉ đạo điều hành | HCDC',
+  title: 'Văn bản chỉ đạo điều hành | CDC Đà Nẵng',
 };
 
 async function getDocuments() {
@@ -32,7 +32,7 @@ export default async function DocumentsPage() {
   return (
     <div className="container py-8">
       <h1 className={styles.pageTitle}>VĂN BẢN CHỈ ĐẠO ĐIỀU HÀNH</h1>
-      <p className={styles.subtitle}>Hệ thống tra cứu các văn bản quy phạm pháp luật, chỉ đạo, điều hành của Sở Y Tế và HCDC.</p>
+      <p className={styles.subtitle}>Hệ thống tra cứu các văn bản quy phạm pháp luật, chỉ đạo, điều hành của Sở Y Tế và CDC Đà Nẵng.</p>
 
       <div className={styles.tableWrapper}>
         <table className={styles.table}>

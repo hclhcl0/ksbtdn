@@ -69,7 +69,7 @@ export const HeroCarouselClient = ({ banners, globalSize, globalCustomHeight, gl
           >
             <div className={`${styles.embla__container} ${isFade || isZoom || isFlip ? styles.effectContainer : ''}`}>
               {banners.map((banner, index) => {
-                const imageUrl = banner.image?.url || 'https://hcdc.vn/public/img/files/260407.jpg?v=1780728683';
+                const imageUrl = banner.image?.url || 'https://via.placeholder.com/1200x500?text=Banner';
                 const mobileUrl = banner.mobileImage?.url;
                 const target = banner.openInNewTab ? '_blank' : '_self';
                 const isActive = index === selectedIndex;

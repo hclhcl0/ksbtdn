@@ -94,7 +94,7 @@ export const NewsGrid = async ({ categoryId, categoryName, categorySlug, limitOv
           } as React.CSSProperties}
         >
           {articles.map((article: any) => {
-            const mediaUrl = article.image?.url || 'https://via.placeholder.com/800x450?text=HCDC';
+            const mediaUrl = article.image?.url || 'https://via.placeholder.com/800x450?text=CDC+Da+Nang';
             const date = new Date(article.createdAt).toLocaleDateString('vi-VN');
             const catName = article.category?.name || 'Tin tức';
             

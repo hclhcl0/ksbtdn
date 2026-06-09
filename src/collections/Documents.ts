@@ -31,7 +31,7 @@ export const Documents: CollectionConfig = {
       type: 'text',
       required: true,
       label: 'Cơ quan ban hành',
-      defaultValue: 'Sở Y tế / HCDC',
+      defaultValue: 'Sở Y tế / CDC Đà Nẵng',
     },
     {
       name: 'publishedDate',

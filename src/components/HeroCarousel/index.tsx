@@ -50,7 +50,7 @@ export const HeroCarousel = async () => {
         <div className="container">
           <div className={styles.banner}>
             <a href="#">
-               <img src="https://hcdc.vn/public/img/files/260407.jpg?v=1780728683" alt="Default Banner" />
+                <img src="https://via.placeholder.com/1200x500?text=Banner" alt="Default Banner" />
             </a>
           </div>
         </div>

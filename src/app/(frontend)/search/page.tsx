@@ -14,7 +14,7 @@ interface PageParams {
 }
 
 export const metadata = {
-  title: 'Tìm Kiếm | HCDC',
+  title: 'Tìm Kiếm | CDC Đà Nẵng',
 };
 
 export default async function SearchPage({ searchParams }: PageParams) {
@@ -62,7 +62,7 @@ export default async function SearchPage({ searchParams }: PageParams) {
       ) : (
         <div className={styles.grid}>
           {articles.map((article: any) => {
-            const mediaUrl = article.image?.url || 'https://via.placeholder.com/800x450?text=HCDC';
+            const mediaUrl = article.image?.url || 'https://via.placeholder.com/800x450?text=CDC+Da+Nang';
             const date = new Date(article.createdAt).toLocaleDateString('vi-VN');
             
             return (

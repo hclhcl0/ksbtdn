@@ -19,8 +19,8 @@ const roboto = Roboto({
 });
 
 export const metadata: Metadata = {
-  title: "TRUNG TÂM KIỂM SOÁT BỆNH TẬT THÀNH PHỐ HỒ CHÍ MINH",
-  description: "Trung tâm Kiểm soát Bệnh tật Thành phố Hồ Chí Minh",
+  title: "TRUNG TÂM KIỂM SOÁT BỆNH TẬT THÀNH PHỐ ĐÀ NẴNG",
+  description: "Trung tâm Kiểm soát Bệnh tật Thành phố Đà Nẵng",
 };
 
 function hexToRgb(hex: string | undefined | null) {
