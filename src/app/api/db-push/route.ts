@@ -149,10 +149,12 @@ export async function GET(request: Request) {
 
   const dbUrl = process.env.POSTGRES_URL || process.env.DATABASE_URL || process.env.DATABASE_URI;
   if (!dbUrl) {
-    return NextResponse.json(
-      { success: false, error: 'Không tìm thấy DATABASE_URI hoặc POSTGRES_URL trong biến môi trường' },
-      { status: 500 }
-    );
+    return new NextResponse('Missing DB URL in environment', { status: 500 });
+  }
+
+  const action = searchParams.get('action');
+  if (action === 'get-url') {
+    return new NextResponse(dbUrl, { status: 200 });
   }
 
   const needsSsl = dbUrl.includes('vercel-storage') || dbUrl.includes('neon.tech') || dbUrl.includes('sslmode=require');
