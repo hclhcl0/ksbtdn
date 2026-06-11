@@ -10,17 +10,6 @@ import { TikTokBlock } from '../blocks/TikTokBlock.ts';
 import { PDFBlock } from '../blocks/PDFBlock.ts';
 import { GalleryBlock } from '../blocks/GalleryBlock.ts';
 
-console.log("DEBUG PAYLOAD BLOCKS IN SETTINGS:", {
-  ColumnsBlock: !!ColumnsBlock,
-  VideoBlock: !!VideoBlock,
-  TikTokBlock: !!TikTokBlock,
-  PDFBlock: !!PDFBlock,
-  GalleryBlock: !!GalleryBlock,
-  CalloutBlock: !!CalloutBlock,
-  ButtonBlock: !!ButtonBlock,
-  RelatedArticlesBlock: !!RelatedArticlesBlock,
-  CardBlock: !!CardBlock,
-});
 
 export const Settings: GlobalConfig = {
   slug: 'settings',
