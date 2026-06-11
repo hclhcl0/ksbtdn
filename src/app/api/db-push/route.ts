@@ -140,6 +140,12 @@ const MIGRATION_STATEMENTS = [
   `CREATE INDEX IF NOT EXISTS "main_menu_menu_items_sub_items_parent_idx" ON "main_menu_menu_items_sub_items" USING btree ("_parent_id")`,
 
   // =====================================================
+  // FIX 2b: settings table — missing columns for new fields
+  // =====================================================
+  `ALTER TABLE "settings" ADD COLUMN IF NOT EXISTS "home_news_layout" varchar DEFAULT 'grid'`,
+  `ALTER TABLE "settings" ADD COLUMN IF NOT EXISTS "theme_config_font_family" varchar DEFAULT 'Inter'`,
+
+  // =====================================================
   // FIX 3: settings homeSections blocks
   // =====================================================
 
