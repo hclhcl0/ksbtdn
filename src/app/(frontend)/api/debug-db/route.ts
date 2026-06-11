@@ -1,37 +1,53 @@
 import { NextResponse } from 'next/server';
-import { getPayload } from 'payload';
-import configPromise from '@payload-config';
+import pg from 'pg';
 
 export const dynamic = 'force-dynamic';
 
 export async function GET() {
-  try {
-    const payload = await getPayload({ config: configPromise });
+  const dbUrl = process.env.DATABASE_URI || process.env.POSTGRES_URL;
+  if (!dbUrl) {
+    return NextResponse.json({ error: 'No DB URL' });
+  }
 
+  const pool = new pg.Pool({
+    connectionString: dbUrl,
+    ssl: { rejectUnauthorized: false },
+    max: 1,
+    connectionTimeoutMillis: 5000,
+  });
+
+  const client = await pool.connect();
+  try {
+    // Kiểm tra trạng thái transaction
+    const txRes = await client.query(`SELECT pg_current_xact_id_if_assigned()`);
+    
+    // Thử query users
+    let usersResult, usersError;
     try {
-      const result = await payload.db.drizzle.execute(
-        `select "users"."id", "users"."updated_at", "users"."created_at", "users"."email",
-         "users"."reset_password_token", "users"."reset_password_expiration",
-         "users"."salt", "users"."hash", "users"."login_attempts", "users"."lock_until",
-         "users"."role" from "users" limit 1`
+      usersResult = await client.query(
+        `SELECT id, email, role FROM "users" LIMIT 1`
       );
-      return NextResponse.json({ success: true, user: (result.rows || result)?.[0]?.email });
     } catch (e: any) {
-      return NextResponse.json({
-        success: false,
-        query_error: e.message,
-        code: e.code,
-        detail: e.detail,
-        severity: e.severity,
-        routine: e.routine,
-        where: e.where,
-      });
+      usersError = { message: e.message, code: e.code, detail: e.detail };
     }
-  } catch (error: any) {
+
+    // Kiểm tra các cột của bảng users
+    let columnsResult;
+    try {
+      columnsResult = await client.query(
+        `SELECT column_name FROM information_schema.columns WHERE table_name = 'users' ORDER BY ordinal_position`
+      );
+    } catch (e: any) {}
+
     return NextResponse.json({
-      success: false,
-      init_error: error.message,
-      stack: error.stack?.split('\n').slice(0, 5),
+      success: true,
+      tx: txRes.rows[0],
+      users: usersResult?.rows?.[0],
+      usersError,
+      userColumns: columnsResult?.rows?.map((r: any) => r.column_name),
     });
+  } finally {
+    client.release();
+    await pool.end();
   }
 }
