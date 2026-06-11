@@ -8,6 +8,8 @@ export const BannerSettings: GlobalConfig = {
   },
   access: {
     read: () => true,
+    // Chỉ Admin mới được sửa cấu hình banner
+    update: ({ req: { user } }: any) => user?.role === 'admin',
   },
   fields: [
     {

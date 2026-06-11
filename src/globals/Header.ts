@@ -8,6 +8,8 @@ export const Header: GlobalConfig = {
   },
   access: {
     read: () => true,
+    // Chỉ Admin mới được sửa cấu hình giao diện
+    update: ({ req: { user } }: any) => user?.role === 'admin',
   },
   fields: [
     {

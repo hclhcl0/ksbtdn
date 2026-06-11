@@ -12,6 +12,8 @@ export const Sidebar: GlobalConfig = {
   },
   access: {
     read: () => true,
+    // Chỉ Admin mới được sửa Sidebar
+    update: ({ req: { user } }: any) => user?.role === 'admin',
   },
   fields: [
     {

@@ -18,11 +18,10 @@ export const Articles: CollectionConfig = {
   },
   admin: {
     useAsTitle: 'title',
-    defaultColumns: ['title', 'category', 'publishedAt', 'status'],
+    defaultColumns: ['title', 'category', 'publishedAt', 'reviewStatus', 'status'],
     group: 'Nội dung',
     preview: (doc) => {
       if (doc?.slug) {
-        // Sử dụng biến môi trường cho domain thực tế, hoặc mặc định localhost
         const baseUrl = process.env.NEXT_PUBLIC_SERVER_URL || process.env.PAYLOAD_PUBLIC_SERVER_URL || 'http://localhost:3000';
         return `${baseUrl}/bai-viet/${doc.slug}?preview=true`;
       }
@@ -31,8 +30,8 @@ export const Articles: CollectionConfig = {
   },
   access: {
     read: ({ req: { user } }) => {
-      // Admin/Editor có thể xem tất cả bài (kể cả nháp)
-      if (user && (user.role === 'admin' || user.role === 'editor')) {
+      // Admin, Editor, Moderator xem tất cả bài (kể cả nháp)
+      if (user && ['admin', 'editor', 'moderator'].includes(user.role as string)) {
         return true;
       }
       // Author xem được bài đã public HOẶC bài nháp của chính mình
@@ -51,16 +50,20 @@ export const Articles: CollectionConfig = {
     },
     create: ({ req: { user } }) => {
       if (!user) return false;
-      return ['admin', 'editor', 'author'].includes(user.role as string);
+      return ['admin', 'editor', 'moderator', 'author'].includes(user.role as string);
     },
     update: ({ req: { user } }) => {
       if (!user) return false;
-      if (user.role === 'admin' || user.role === 'editor') return true;
-      return { author: { equals: user.id } }; // Author chỉ sửa được bài của mình
+      // Admin, Editor, Moderator sửa được tất cả
+      if (['admin', 'editor', 'moderator'].includes(user.role as string)) return true;
+      // Author chỉ sửa bài của mình
+      return { author: { equals: user.id } };
     },
     delete: ({ req: { user } }) => {
       if (!user) return false;
-      if (user.role === 'admin' || user.role === 'editor') return true;
+      // Moderator KHÔNG được xóa bài
+      if (['admin', 'editor'].includes(user.role as string)) return true;
+      // Author chỉ được xóa bài nháp của mình
       return { author: { equals: user.id } };
     },
   },
@@ -69,16 +72,36 @@ export const Articles: CollectionConfig = {
   },
   hooks: {
     beforeChange: [
-      ({ req: { user }, data, operation }) => {
-        // Tác giả không được quyền tự xuất bản (publish)
+      ({ req: { user }, data }) => {
+        // Author không được tự xuất bản (publish)
         if (user && user.role === 'author') {
           if (data._status === 'published') {
-             data._status = 'draft';
+            data._status = 'draft';
+          }
+          // Author chỉ được đặt reviewStatus là draft hoặc pending_review
+          if (data.reviewStatus && !['draft', 'pending_review'].includes(data.reviewStatus)) {
+            data.reviewStatus = 'draft';
           }
         }
         return data;
-      }
-    ]
+      },
+      // Validate chuyên mục được phép cho Author
+      async ({ req, data, operation }) => {
+        if (req.user?.role === 'author') {
+          const allowedCategories = (req.user as any)?.allowedCategories;
+          if (allowedCategories && allowedCategories.length > 0 && data.category) {
+            const categoryId = typeof data.category === 'string' ? data.category : (data.category as any)?.id;
+            const allowedIds = allowedCategories.map((c: any) =>
+              typeof c === 'string' ? c : c?.id
+            );
+            if (categoryId && !allowedIds.includes(categoryId)) {
+              throw new Error('Bạn chỉ được phép viết bài trong các chuyên mục đã được phân công. Vui lòng chọn đúng chuyên mục.');
+            }
+          }
+        }
+        return data;
+      },
+    ],
   },
   fields: [
     {
@@ -147,6 +170,22 @@ export const Articles: CollectionConfig = {
             return value;
           },
         ],
+      },
+    },
+    {
+      name: 'reviewStatus',
+      type: 'select',
+      label: 'Trạng thái duyệt bài',
+      defaultValue: 'draft',
+      options: [
+        { label: '📝 Đang soạn thảo', value: 'draft' },
+        { label: '⏳ Chờ biên tập duyệt', value: 'pending_review' },
+        { label: '✅ Đã duyệt – Sẵn sàng xuất bản', value: 'approved' },
+        { label: '❌ Bị từ chối', value: 'rejected' },
+      ],
+      admin: {
+        position: 'sidebar',
+        description: 'Tác giả chuyển sang "Chờ duyệt" khi hoàn tất. Biên tập/Quản trị xét duyệt và xuất bản.',
       },
     },
     {

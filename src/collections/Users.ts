@@ -49,6 +49,7 @@ export const Users: CollectionConfig = {
       defaultValue: 'author',
       options: [
         { label: 'Quản trị viên (Admin)', value: 'admin' },
+        { label: 'Kiểm duyệt viên (Moderator)', value: 'moderator' },
         { label: 'Biên tập viên (Editor)', value: 'editor' },
         { label: 'Cộng tác viên/Tác giả (Author)', value: 'author' },
         { label: 'Người dùng (User)', value: 'user' },
@@ -67,6 +68,18 @@ export const Users: CollectionConfig = {
       name: 'name',
       type: 'text',
       label: 'Họ và tên',
+    },
+    {
+      name: 'allowedCategories',
+      type: 'relationship',
+      relationTo: 'categories',
+      hasMany: true,
+      label: 'Chuyên mục được phép viết bài',
+      admin: {
+        description: 'Để trống = không giới hạn chuyên mục. Chỉ áp dụng cho Cộng tác viên (Author).',
+        position: 'sidebar',
+        condition: (data: any) => data?.role === 'author',
+      },
     },
   ],
 };

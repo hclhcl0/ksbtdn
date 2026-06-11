@@ -8,6 +8,8 @@ export const MainMenu: GlobalConfig = {
   },
   access: {
     read: () => true,
+    // Chỉ Admin mới được sửa menu điều hướng
+    update: ({ req: { user } }: any) => user?.role === 'admin',
   },
   fields: [
     {

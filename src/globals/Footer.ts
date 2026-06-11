@@ -8,6 +8,8 @@ export const Footer: GlobalConfig = {
   },
   access: {
     read: () => true,
+    // Chỉ Admin mới được sửa chân trang
+    update: ({ req: { user } }: any) => user?.role === 'admin',
   },
   fields: [
     {
