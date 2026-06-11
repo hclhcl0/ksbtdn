@@ -101,6 +101,7 @@ export const Articles: CollectionConfig = {
     {
       name: 'slug',
       type: 'text',
+      label: 'Đường dẫn tĩnh (Slug)',
       required: true,
       unique: true,
       admin: {

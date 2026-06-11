@@ -44,6 +44,7 @@ export const Users: CollectionConfig = {
     {
       name: 'role',
       type: 'select',
+      label: 'Vai trò / Quyền hạn',
       required: true,
       defaultValue: 'author',
       options: [

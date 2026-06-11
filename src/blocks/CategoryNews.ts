@@ -4,8 +4,8 @@ export const CategoryNewsBlock: Block = {
   slug: 'category-news',
   interfaceName: 'CategoryNewsBlock',
   labels: {
-    singular: 'Category News (Khối chuyên mục)',
-    plural: 'Category News Blocks',
+    singular: 'Khối chuyên mục tin tức',
+    plural: 'Khối chuyên mục tin tức',
   },
   fields: [
     {

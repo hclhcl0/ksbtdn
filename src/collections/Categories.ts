@@ -23,6 +23,7 @@ export const Categories: CollectionConfig = {
     {
       name: 'slug',
       type: 'text',
+      label: 'Đường dẫn tĩnh (Slug)',
       required: true,
       unique: true,
       admin: {
