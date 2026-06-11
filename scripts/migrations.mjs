@@ -548,4 +548,48 @@ export const MIGRATION_STATEMENTS = [
   )`,
   `CREATE INDEX IF NOT EXISTS "pages_blocks_table_block_rows_cells_order_idx" ON "pages_blocks_table_block_rows_cells" USING btree ("_order")`,
   `CREATE INDEX IF NOT EXISTS "pages_blocks_table_block_rows_cells_parent_idx" ON "pages_blocks_table_block_rows_cells" USING btree ("_parent_id")`,
+
+  // =====================================================
+  // FIX 7: video_channels table and lock rel schema fixes
+  // =====================================================
+  `DO $$ BEGIN
+    CREATE TYPE "enum_video_channels_platform" AS ENUM('youtube', 'facebook', 'tiktok');
+  EXCEPTION
+    WHEN duplicate_object THEN null;
+  END $$;`,
+
+  `CREATE TABLE IF NOT EXISTS "video_channels" (
+    "id" serial PRIMARY KEY NOT NULL,
+    "name" varchar NOT NULL,
+    "platform" "enum_video_channels_platform" NOT NULL,
+    "channel_url" varchar,
+    "channel_id" varchar,
+    "avatar_id" integer,
+    "description" varchar,
+    "updated_at" timestamp(3) with time zone DEFAULT now() NOT NULL,
+    "created_at" timestamp(3) with time zone DEFAULT now() NOT NULL,
+    "tiktok_handle" varchar,
+    CONSTRAINT "video_channels_avatar_id_fk" FOREIGN KEY ("avatar_id") REFERENCES "media"("id") ON DELETE set null ON UPDATE no action
+  )`,
+
+  `CREATE INDEX IF NOT EXISTS "video_channels_avatar_idx" ON "video_channels" USING btree ("avatar_id")`,
+  `CREATE INDEX IF NOT EXISTS "video_channels_updated_at_idx" ON "video_channels" USING btree ("updated_at")`,
+  `CREATE INDEX IF NOT EXISTS "video_channels_created_at_idx" ON "video_channels" USING btree ("created_at")`,
+
+  `ALTER TABLE "videos" ADD COLUMN IF NOT EXISTS "channel_id" integer`,
+  `ALTER TABLE "videos" DROP CONSTRAINT IF EXISTS "videos_channel_id_fk"`,
+  `ALTER TABLE "videos" ADD CONSTRAINT "videos_channel_id_fk" FOREIGN KEY ("channel_id") REFERENCES "video_channels"("id") ON DELETE set null ON UPDATE no action`,
+  `CREATE INDEX IF NOT EXISTS "videos_channel_idx" ON "videos" USING btree ("channel_id")`,
+
+  `ALTER TABLE "payload_locked_documents_rels" ADD COLUMN IF NOT EXISTS "video_channels_id" integer`,
+  `ALTER TABLE "payload_locked_documents_rels" ADD COLUMN IF NOT EXISTS "form_submissions_id" integer`,
+  
+  `ALTER TABLE "payload_locked_documents_rels" DROP CONSTRAINT IF EXISTS "payload_locked_documents_rels_video_channels_fk"`,
+  `ALTER TABLE "payload_locked_documents_rels" ADD CONSTRAINT "payload_locked_documents_rels_video_channels_fk" FOREIGN KEY ("video_channels_id") REFERENCES "video_channels"("id") ON DELETE cascade ON UPDATE no action`,
+  
+  `ALTER TABLE "payload_locked_documents_rels" DROP CONSTRAINT IF EXISTS "payload_locked_documents_rels_form_submissions_fk"`,
+  `ALTER TABLE "payload_locked_documents_rels" ADD CONSTRAINT "payload_locked_documents_rels_form_submissions_fk" FOREIGN KEY ("form_submissions_id") REFERENCES "form_submissions"("id") ON DELETE cascade ON UPDATE no action`,
+  
+  `CREATE INDEX IF NOT EXISTS "payload_locked_documents_rels_video_channels_id_idx" ON "payload_locked_documents_rels" USING btree ("video_channels_id")`,
+  `CREATE INDEX IF NOT EXISTS "payload_locked_documents_rels_form_submissions_id_idx" ON "payload_locked_documents_rels" USING btree ("form_submissions_id")`
 ];
