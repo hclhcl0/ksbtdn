@@ -29,6 +29,7 @@ import { WorkSchedules } from './collections/WorkSchedules.ts';
 import { Videos } from './collections/Videos.ts';
 import { VideoChannels } from './collections/VideoChannels.ts';
 import { FormSubmissions } from './collections/FormSubmissions.ts';
+import { OrgUnits } from './collections/OrgUnits.ts';
 
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
@@ -65,6 +66,7 @@ export default buildConfig({
     VideoChannels,
     Videos,
     FormSubmissions,
+    OrgUnits,
   ],
   globals: [
     Header,
