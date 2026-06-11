@@ -9,7 +9,22 @@ export async function GET() {
     const payload = await getPayload({ config: configPromise });
 
     try {
-      const result = await payload.db.drizzle.execute(`select "users"."id", "users"."email" from "users" limit 1`);
+      const result = await payload.db.drizzle.execute(`select "users"."id", "users"."updated_at", "users"."created_at", "users"."email", "users"."reset_password_token", "users"."reset_password_expiration", "users"."salt", "users"."hash", "users"."login_attempts", "users"."lock_until", "users"."role" from "users" limit 1`);
+      
+      // Test articles query too
+      try {
+        await payload.db.drizzle.execute(`select "articles"."id" from "articles" limit 1`);
+      } catch (e2: any) {
+         return NextResponse.json({
+          success: false,
+          error_name: e2.name,
+          error_message: e2.message,
+          error_code: e2.code,
+          error_detail: e2.detail,
+          target: "articles"
+        }, { status: 500 });
+      }
+
       return NextResponse.json({
         success: true,
         result: result.rows || result,
@@ -22,7 +37,7 @@ export async function GET() {
         error_code: dbError.code,
         error_detail: dbError.detail,
         error_hint: dbError.hint,
-        error_stack: dbError.stack,
+        target: "users"
       }, { status: 500 });
     }
   } catch (error: any) {
