@@ -1,53 +1,43 @@
 import { NextResponse } from 'next/server';
-import pg from 'pg';
+import { getPayload } from 'payload';
+import configPromise from '@payload-config';
 
 export const dynamic = 'force-dynamic';
 
 export async function GET() {
-  const dbUrl = process.env.DATABASE_URI || process.env.POSTGRES_URL;
-  if (!dbUrl) {
-    return NextResponse.json({ error: 'No DB URL' });
-  }
-
-  const pool = new pg.Pool({
-    connectionString: dbUrl,
-    ssl: { rejectUnauthorized: false },
-    max: 1,
-    connectionTimeoutMillis: 5000,
-  });
-
-  const client = await pool.connect();
   try {
-    // Kiểm tra trạng thái transaction
-    const txRes = await client.query(`SELECT pg_current_xact_id_if_assigned()`);
+    const payload = await getPayload({ config: configPromise });
     
-    // Thử query users
-    let usersResult, usersError;
+    // Query đúng chuẩn Payload login
     try {
-      usersResult = await client.query(
-        `SELECT id, email, role FROM "users" LIMIT 1`
+      const result = await payload.db.drizzle.execute(
+        `SELECT "users"."id", "users"."updated_at", "users"."created_at", "users"."email",
+         "users"."reset_password_token", "users"."reset_password_expiration",
+         "users"."salt", "users"."hash", "users"."login_attempts", "users"."lock_until",
+         "users"."role" FROM "users" LIMIT 1`
       );
-    } catch (e: any) {
-      usersError = { message: e.message, code: e.code, detail: e.detail };
+      return NextResponse.json({ 
+        success: true, 
+        email: (result.rows as any[])?.[0]?.email
+      });
+    } catch (qe: any) {
+      return NextResponse.json({
+        success: false,
+        stage: 'query',
+        message: qe.message,
+        code: qe.code,
+        detail: qe.detail,
+        severity: qe.severity,
+      });
     }
-
-    // Kiểm tra các cột của bảng users
-    let columnsResult;
-    try {
-      columnsResult = await client.query(
-        `SELECT column_name FROM information_schema.columns WHERE table_name = 'users' ORDER BY ordinal_position`
-      );
-    } catch (e: any) {}
-
+  } catch (initErr: any) {
     return NextResponse.json({
-      success: true,
-      tx: txRes.rows[0],
-      users: usersResult?.rows?.[0],
-      usersError,
-      userColumns: columnsResult?.rows?.map((r: any) => r.column_name),
+      success: false,
+      stage: 'init',
+      message: initErr.message,
+      code: initErr.code,
+      detail: initErr.detail,
+      stack: initErr.stack?.split('\n').slice(0, 8),
     });
-  } finally {
-    client.release();
-    await pool.end();
   }
 }
