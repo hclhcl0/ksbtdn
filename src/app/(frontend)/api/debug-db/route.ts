@@ -16,6 +16,32 @@ export async function GET() {
   const results: Record<string, string> = {};
 
   const statements = [
+    // Fix users_sessions table (sessions support)
+    `CREATE TABLE IF NOT EXISTS "users_sessions" (
+      "_order" integer NOT NULL,
+      "_parent_id" integer NOT NULL REFERENCES "users"("id") ON DELETE cascade,
+      "id" varchar PRIMARY KEY NOT NULL,
+      "created_at" timestamp(3) with time zone DEFAULT now(),
+      "expires_at" timestamp(3) with time zone
+    )`,
+    `CREATE INDEX IF NOT EXISTS "users_sessions_order_idx" ON "users_sessions" USING btree ("_order")`,
+    `CREATE INDEX IF NOT EXISTS "users_sessions_parent_idx" ON "users_sessions" USING btree ("_parent_id")`,
+
+    // Fix users_rels table (allowedCategories relationship)
+    `CREATE TABLE IF NOT EXISTS "users_rels" (
+      "id" serial PRIMARY KEY NOT NULL,
+      "order" integer,
+      "parent_id" integer NOT NULL REFERENCES "users"("id") ON DELETE cascade,
+      "path" varchar NOT NULL,
+      "categories_id" integer REFERENCES "categories"("id") ON DELETE cascade
+    )`,
+    `CREATE INDEX IF NOT EXISTS "users_rels_order_idx" ON "users_rels" USING btree ("order")`,
+    `CREATE INDEX IF NOT EXISTS "users_rels_parent_idx" ON "users_rels" USING btree ("parent_id")`,
+    `CREATE INDEX IF NOT EXISTS "users_rels_path_idx" ON "users_rels" USING btree ("path")`,
+
+    // Fix users table - thêm cột name nếu chưa có
+    `ALTER TABLE "users" ADD COLUMN IF NOT EXISTS "name" varchar`,
+
     // Fix articles - thiếu cột review_status
     `ALTER TABLE "articles" ADD COLUMN IF NOT EXISTS "review_status" varchar DEFAULT 'draft'`,
     // Fix articles versions table
