@@ -2,9 +2,9 @@ import type { GlobalConfig } from 'payload';
 
 export const BannerSettings: GlobalConfig = {
   slug: 'banner-settings',
-  label: 'Cài đặt Slider',
+  label: 'Cấu hình Banner',
   admin: {
-    group: 'Giao diện',
+    group: 'Cấu hình',
   },
   access: {
     read: () => true,

@@ -13,9 +13,9 @@ import { GalleryBlock } from '../blocks/GalleryBlock.ts';
 
 export const Settings: GlobalConfig = {
   slug: 'settings',
-  label: 'Cấu hình chung (Settings)',
+  label: 'Cấu hình Website',
   admin: {
-    group: 'Giao diện',
+    group: 'Cấu hình',
   },
   access: {
     read: () => true,

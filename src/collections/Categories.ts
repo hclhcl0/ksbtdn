@@ -2,8 +2,13 @@ import type { CollectionConfig } from 'payload';
 
 export const Categories: CollectionConfig = {
   slug: 'categories',
+  labels: {
+    singular: 'Chuyên mục',
+    plural: 'Chuyên mục bài viết',
+  },
   admin: {
     useAsTitle: 'name',
+    group: 'Nội dung',
   },
   access: {
     read: () => true,

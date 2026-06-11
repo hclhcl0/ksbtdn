@@ -5,6 +5,7 @@ import { lexicalEditor } from '@payloadcms/richtext-lexical';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { vercelBlobStorage } from '@payloadcms/storage-vercel-blob';
+import { vi } from '@payloadcms/translations/languages/vi';
 
 // DATABASE_URI = custom Postgres URL
 // POSTGRES_URL = auto-injected by Vercel Postgres addon
@@ -46,6 +47,10 @@ export default buildConfig({
         '@/app/(payload)/admin/components/YouTubeSyncButton.tsx#YouTubeSyncButton',
       ]
     }
+  },
+  i18n: {
+    supportedLanguages: { vi },
+    fallbackLanguage: 'vi',
   },
   collections: [
     Users,

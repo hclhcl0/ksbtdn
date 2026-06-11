@@ -2,8 +2,13 @@ import type { CollectionConfig } from 'payload';
 
 export const Users: CollectionConfig = {
   slug: 'users',
+  labels: {
+    singular: 'Tài khoản',
+    plural: 'Danh sách tài khoản',
+  },
   admin: {
     useAsTitle: 'email',
+    group: 'Quản trị hệ thống',
   },
   auth: true,
   access: {

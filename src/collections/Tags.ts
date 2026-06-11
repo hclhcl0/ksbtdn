@@ -2,8 +2,13 @@ import type { CollectionConfig } from 'payload';
 
 export const Tags: CollectionConfig = {
   slug: 'tags',
+  labels: {
+    singular: 'Thẻ / Từ khóa',
+    plural: 'Thẻ / Từ khóa',
+  },
   admin: {
     useAsTitle: 'title',
+    group: 'Nội dung',
   },
   access: {
     read: () => true,

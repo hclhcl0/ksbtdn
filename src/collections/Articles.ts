@@ -12,9 +12,14 @@ import { CardBlock } from '../blocks/CardBlock.ts';
 
 export const Articles: CollectionConfig = {
   slug: 'articles',
+  labels: {
+    singular: 'Bài viết',
+    plural: 'Danh sách bài viết',
+  },
   admin: {
     useAsTitle: 'title',
     defaultColumns: ['title', 'category', 'publishedAt', 'status'],
+    group: 'Nội dung',
     preview: (doc) => {
       if (doc?.slug) {
         // Sử dụng biến môi trường cho domain thực tế, hoặc mặc định localhost

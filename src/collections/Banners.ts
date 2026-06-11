@@ -3,8 +3,8 @@ import type { CollectionConfig } from 'payload';
 export const Banners: CollectionConfig = {
   slug: 'banners',
   labels: {
-    singular: 'Banner',
-    plural: 'Banners (Trang chủ)',
+    singular: 'Banner quảng cáo',
+    plural: 'Danh sách Banner',
   },
   admin: {
     group: 'Giao diện',

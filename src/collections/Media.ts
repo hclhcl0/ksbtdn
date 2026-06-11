@@ -2,6 +2,13 @@ import type { CollectionConfig } from 'payload';
 
 export const Media: CollectionConfig = {
   slug: 'media',
+  labels: {
+    singular: 'Tệp phương tiện',
+    plural: 'Thư viện phương tiện',
+  },
+  admin: {
+    group: 'Nội dung',
+  },
   access: {
     read: () => true,
   },
@@ -35,6 +42,7 @@ export const Media: CollectionConfig = {
       name: 'alt',
       type: 'text',
       required: true,
+      label: 'Mô tả Alt (SEO/Accessibility)',
     },
   ],
 };

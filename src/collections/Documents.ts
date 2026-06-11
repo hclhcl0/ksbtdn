@@ -3,12 +3,13 @@ import type { CollectionConfig } from 'payload';
 export const Documents: CollectionConfig = {
   slug: 'documents',
   labels: {
-    singular: 'Văn bản',
-    plural: 'Văn bản chỉ đạo',
+    singular: 'Văn bản pháp quy',
+    plural: 'Văn bản pháp quy',
   },
   admin: {
     useAsTitle: 'title',
     defaultColumns: ['documentNumber', 'title', 'issuer', 'publishedDate'],
+    group: 'Nội dung',
   },
   access: {
     read: () => true,
