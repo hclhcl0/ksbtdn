@@ -20,6 +20,7 @@
     "@payloadcms/richtext-lexical": "^3.85.0",
     "@payloadcms/storage-vercel-blob": "^3.85.0",
     "@payloadcms/ui": "^3.85.0",
+    "@vercel/postgres": "^0.10.0",
     "clsx": "^2.1.1",
     "embla-carousel-autoplay": "^8.6.0",
     "embla-carousel-react": "^8.6.0",
