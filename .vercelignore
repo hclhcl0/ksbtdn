@@ -4,7 +4,6 @@ scratch
 media
 *.db
 *.sql
-*.png
 news_data.json
 hcdc.html
 *.db-wal
