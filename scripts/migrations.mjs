@@ -1,23 +1,29 @@
 /**
  * MIGRATION STATEMENTS — nguồn duy nhất (single source of truth)
- * Cập nhật lúc: 11/06/2026 15:00
- * Được dùng bởi:
- *   - scripts/migrate.mjs          (CI/CD GitHub Actions)
- *   - src/app/api/db-push/route.ts (API route thủ công)
+ * Cập nhật lúc: 11/06/2026 23:00
  *
- * QUY TẮC ĐẶT TÊN BẢNG PAYLOAD CMS:
- *   Collection slug      → ten_collection
- *   Global slug          → ten_global
- *   Block trong global   → ten_global_blocks_ten_block
- *   Block trong collection → ten_collection_blocks_ten_block
- *   Array trong block    → ..._ten_block_ten_array
+ * Được dùng bởi:
+ *   - migrate.mjs  (chạy tự động khi build trên Vercel: `node migrate.mjs && next build`)
+ *
+ * QUY TẮC:
+ *   1. Luôn dùng IF NOT EXISTS / ADD COLUMN IF NOT EXISTS → an toàn khi chạy lại
+ *   2. Khi thêm Collection/Global/Field mới → thêm SQL vào cuối danh sách này
+ *   3. KHÔNG xóa các statement cũ (chỉ thêm mới)
+ *   4. Sau khi thêm SQL → commit & push → Vercel sẽ tự apply khi build
+ *
+ * QUY TẮC ĐẶT TÊN BẢNG PAYLOAD CMS (drizzle-orm):
+ *   Collection slug "my-items"     → "my_items"
+ *   Array field "myItems.members"  → "my_items_members"
+ *   Relationship field             → "my_items_rels"
+ *   Global slug "my-settings"      → "my_settings"
+ *   Versions của collection        → "_my_items_v"
  */
 
 export const MIGRATION_STATEMENTS = [
-  // =====================================================
-  // FIX 1: settings sidebarWidgets blocks
-  // =====================================================
 
+  // ====================================================
+  // BATCH 1 – Settings: sidebarWidgets blocks
+  // ====================================================
   `CREATE TABLE IF NOT EXISTS "settings_blocks_categories_widget" (
     "id" serial PRIMARY KEY NOT NULL,
     "_order" integer NOT NULL,
@@ -111,9 +117,9 @@ export const MIGRATION_STATEMENTS = [
   `CREATE INDEX IF NOT EXISTS "settings_blocks_custom_html_widget_parent_idx" ON "settings_blocks_custom_html_widget" USING btree ("_parent_id")`,
   `CREATE INDEX IF NOT EXISTS "settings_blocks_custom_html_widget_path_idx" ON "settings_blocks_custom_html_widget" USING btree ("_path")`,
 
-  // =====================================================
-  // FIX 2: main_menu global
-  // =====================================================
+  // ====================================================
+  // BATCH 2 – main_menu global
+  // ====================================================
   `CREATE TABLE IF NOT EXISTS "main_menu" (
     "id" serial PRIMARY KEY NOT NULL,
     "menu_position" varchar DEFAULT 'top',
@@ -143,16 +149,15 @@ export const MIGRATION_STATEMENTS = [
   `CREATE INDEX IF NOT EXISTS "main_menu_menu_items_sub_items_order_idx" ON "main_menu_menu_items_sub_items" USING btree ("_order")`,
   `CREATE INDEX IF NOT EXISTS "main_menu_menu_items_sub_items_parent_idx" ON "main_menu_menu_items_sub_items" USING btree ("_parent_id")`,
 
-  // =====================================================
-  // FIX 2b: settings table — missing columns
-  // =====================================================
+  // ====================================================
+  // BATCH 2b – settings table: missing columns
+  // ====================================================
   `ALTER TABLE "settings" ADD COLUMN IF NOT EXISTS "home_news_layout" varchar DEFAULT 'grid'`,
   `ALTER TABLE "settings" ADD COLUMN IF NOT EXISTS "theme_config_font_family" varchar DEFAULT 'Inter'`,
 
-  // =====================================================
-  // FIX 3: settings homeSections blocks
-  // =====================================================
-
+  // ====================================================
+  // BATCH 3 – settings homeSections blocks
+  // ====================================================
   `CREATE TABLE IF NOT EXISTS "settings_blocks_news_category_section" (
     "id" serial PRIMARY KEY NOT NULL,
     "_order" integer NOT NULL,
@@ -293,9 +298,9 @@ export const MIGRATION_STATEMENTS = [
   `CREATE INDEX IF NOT EXISTS "settings_blocks_rich_text_section_parent_idx" ON "settings_blocks_rich_text_section" USING btree ("_parent_id")`,
   `CREATE INDEX IF NOT EXISTS "settings_blocks_rich_text_section_path_idx" ON "settings_blocks_rich_text_section" USING btree ("_path")`,
 
-  // =====================================================
-  // FIX 4: form_submissions collection
-  // =====================================================
+  // ====================================================
+  // BATCH 4 – form_submissions collection
+  // ====================================================
   `CREATE TABLE IF NOT EXISTS "form_submissions" (
     "id" serial PRIMARY KEY NOT NULL,
     "status" varchar DEFAULT 'new',
@@ -311,18 +316,15 @@ export const MIGRATION_STATEMENTS = [
   )`,
   `CREATE INDEX IF NOT EXISTS "form_submissions_created_at_idx" ON "form_submissions" USING btree ("created_at")`,
 
-  // =====================================================
-  // FIX 5: pages collection — new columns
-  // =====================================================
+  // ====================================================
+  // BATCH 5 – pages: new columns + Page Builder blocks
+  // ====================================================
   `ALTER TABLE "pages" ADD COLUMN IF NOT EXISTS "page_type" varchar DEFAULT 'standard'`,
   `ALTER TABLE "pages" ADD COLUMN IF NOT EXISTS "layout" varchar DEFAULT 'withSidebar'`,
   `ALTER TABLE "pages" ADD COLUMN IF NOT EXISTS "seo_title" varchar`,
   `ALTER TABLE "pages" ADD COLUMN IF NOT EXISTS "seo_description" text`,
   `ALTER TABLE "pages" ADD COLUMN IF NOT EXISTS "seo_og_image_id" integer`,
 
-  // =====================================================
-  // FIX 6: pages blocks — Page Builder blocks
-  // =====================================================
   `CREATE TABLE IF NOT EXISTS "pages_blocks_rich_text_block" (
     "id" serial PRIMARY KEY NOT NULL,
     "_order" integer NOT NULL,
@@ -550,9 +552,9 @@ export const MIGRATION_STATEMENTS = [
   `CREATE INDEX IF NOT EXISTS "pages_blocks_table_block_rows_cells_order_idx" ON "pages_blocks_table_block_rows_cells" USING btree ("_order")`,
   `CREATE INDEX IF NOT EXISTS "pages_blocks_table_block_rows_cells_parent_idx" ON "pages_blocks_table_block_rows_cells" USING btree ("_parent_id")`,
 
-  // =====================================================
-  // FIX 7: video_channels table and lock rel schema fixes
-  // =====================================================
+  // ====================================================
+  // BATCH 6 – video_channels + videos
+  // ====================================================
   `DO $$ BEGIN
     CREATE TYPE "enum_video_channels_platform" AS ENUM('youtube', 'facebook', 'tiktok');
   EXCEPTION
@@ -567,12 +569,11 @@ export const MIGRATION_STATEMENTS = [
     "channel_id" varchar,
     "avatar_id" integer,
     "description" varchar,
+    "tiktok_handle" varchar,
     "updated_at" timestamp(3) with time zone DEFAULT now() NOT NULL,
     "created_at" timestamp(3) with time zone DEFAULT now() NOT NULL,
-    "tiktok_handle" varchar,
     CONSTRAINT "video_channels_avatar_id_fk" FOREIGN KEY ("avatar_id") REFERENCES "media"("id") ON DELETE set null ON UPDATE no action
   )`,
-
   `CREATE INDEX IF NOT EXISTS "video_channels_avatar_idx" ON "video_channels" USING btree ("avatar_id")`,
   `CREATE INDEX IF NOT EXISTS "video_channels_updated_at_idx" ON "video_channels" USING btree ("updated_at")`,
   `CREATE INDEX IF NOT EXISTS "video_channels_created_at_idx" ON "video_channels" USING btree ("created_at")`,
@@ -584,13 +585,96 @@ export const MIGRATION_STATEMENTS = [
 
   `ALTER TABLE "payload_locked_documents_rels" ADD COLUMN IF NOT EXISTS "video_channels_id" integer`,
   `ALTER TABLE "payload_locked_documents_rels" ADD COLUMN IF NOT EXISTS "form_submissions_id" integer`,
-  
   `ALTER TABLE "payload_locked_documents_rels" DROP CONSTRAINT IF EXISTS "payload_locked_documents_rels_video_channels_fk"`,
   `ALTER TABLE "payload_locked_documents_rels" ADD CONSTRAINT "payload_locked_documents_rels_video_channels_fk" FOREIGN KEY ("video_channels_id") REFERENCES "video_channels"("id") ON DELETE cascade ON UPDATE no action`,
-  
   `ALTER TABLE "payload_locked_documents_rels" DROP CONSTRAINT IF EXISTS "payload_locked_documents_rels_form_submissions_fk"`,
   `ALTER TABLE "payload_locked_documents_rels" ADD CONSTRAINT "payload_locked_documents_rels_form_submissions_fk" FOREIGN KEY ("form_submissions_id") REFERENCES "form_submissions"("id") ON DELETE cascade ON UPDATE no action`,
-  
   `CREATE INDEX IF NOT EXISTS "payload_locked_documents_rels_video_channels_id_idx" ON "payload_locked_documents_rels" USING btree ("video_channels_id")`,
-  `CREATE INDEX IF NOT EXISTS "payload_locked_documents_rels_form_submissions_id_idx" ON "payload_locked_documents_rels" USING btree ("form_submissions_id")`
+  `CREATE INDEX IF NOT EXISTS "payload_locked_documents_rels_form_submissions_id_idx" ON "payload_locked_documents_rels" USING btree ("form_submissions_id")`,
+
+  // ====================================================
+  // BATCH 7 – users: sessions + rels + new columns
+  // ====================================================
+  `CREATE TABLE IF NOT EXISTS "users_sessions" (
+    "_order" integer NOT NULL,
+    "_parent_id" integer NOT NULL REFERENCES "users"("id") ON DELETE cascade,
+    "id" varchar PRIMARY KEY NOT NULL,
+    "created_at" timestamp(3) with time zone DEFAULT now(),
+    "expires_at" timestamp(3) with time zone
+  )`,
+  `CREATE INDEX IF NOT EXISTS "users_sessions_order_idx" ON "users_sessions" USING btree ("_order")`,
+  `CREATE INDEX IF NOT EXISTS "users_sessions_parent_idx" ON "users_sessions" USING btree ("_parent_id")`,
+
+  `CREATE TABLE IF NOT EXISTS "users_rels" (
+    "id" serial PRIMARY KEY NOT NULL,
+    "order" integer,
+    "parent_id" integer NOT NULL REFERENCES "users"("id") ON DELETE cascade,
+    "path" varchar NOT NULL,
+    "categories_id" integer REFERENCES "categories"("id") ON DELETE cascade
+  )`,
+  `CREATE INDEX IF NOT EXISTS "users_rels_order_idx" ON "users_rels" USING btree ("order")`,
+  `CREATE INDEX IF NOT EXISTS "users_rels_parent_idx" ON "users_rels" USING btree ("parent_id")`,
+  `CREATE INDEX IF NOT EXISTS "users_rels_path_idx" ON "users_rels" USING btree ("path")`,
+
+  `ALTER TABLE "users" ADD COLUMN IF NOT EXISTS "name" varchar`,
+
+  // ====================================================
+  // BATCH 8 – articles: missing columns
+  // ====================================================
+  `ALTER TABLE "articles" ADD COLUMN IF NOT EXISTS "review_status" varchar DEFAULT 'draft'`,
+  `ALTER TABLE "_articles_v" ADD COLUMN IF NOT EXISTS "version_review_status" varchar DEFAULT 'draft'`,
+  `ALTER TABLE "articles" ADD COLUMN IF NOT EXISTS "author_name" varchar`,
+  `ALTER TABLE "articles" ADD COLUMN IF NOT EXISTS "views" numeric DEFAULT 0`,
+
+  // ====================================================
+  // BATCH 9 – org_units collection
+  // ====================================================
+  `CREATE TABLE IF NOT EXISTS "org_units" (
+    "id" serial PRIMARY KEY NOT NULL,
+    "name" varchar NOT NULL,
+    "unit_type" varchar DEFAULT 'khoa' NOT NULL,
+    "order" numeric DEFAULT 99,
+    "short_description" varchar,
+    "image_id" integer REFERENCES "media"("id") ON DELETE set null,
+    "updated_at" timestamp(3) with time zone DEFAULT now() NOT NULL,
+    "created_at" timestamp(3) with time zone DEFAULT now() NOT NULL
+  )`,
+  `CREATE INDEX IF NOT EXISTS "org_units_created_at_idx" ON "org_units" USING btree ("created_at")`,
+
+  `CREATE TABLE IF NOT EXISTS "org_units_members" (
+    "_order" integer NOT NULL,
+    "_parent_id" integer NOT NULL REFERENCES "org_units"("id") ON DELETE cascade,
+    "id" varchar PRIMARY KEY NOT NULL,
+    "member_name" varchar NOT NULL,
+    "position" varchar DEFAULT 'nhan_vien' NOT NULL,
+    "academic_title" varchar,
+    "email" varchar,
+    "avatar_id" integer REFERENCES "media"("id") ON DELETE set null,
+    "bio" varchar
+  )`,
+  `CREATE INDEX IF NOT EXISTS "org_units_members_order_idx" ON "org_units_members" USING btree ("_order")`,
+  `CREATE INDEX IF NOT EXISTS "org_units_members_parent_id_idx" ON "org_units_members" USING btree ("_parent_id")`,
+
+  `ALTER TABLE "payload_locked_documents_rels" ADD COLUMN IF NOT EXISTS "org_units_id" integer`,
+  `ALTER TABLE "payload_locked_documents_rels" DROP CONSTRAINT IF EXISTS "payload_locked_documents_rels_org_units_fk"`,
+  `ALTER TABLE "payload_locked_documents_rels" ADD CONSTRAINT "payload_locked_documents_rels_org_units_fk" FOREIGN KEY ("org_units_id") REFERENCES "org_units"("id") ON DELETE cascade ON UPDATE no action`,
+  `CREATE INDEX IF NOT EXISTS "payload_locked_documents_rels_org_units_id_idx" ON "payload_locked_documents_rels" USING btree ("org_units_id")`,
+
+  // ====================================================
+  // BATCH 10 – theme_settings global
+  // ====================================================
+  `CREATE TABLE IF NOT EXISTS "theme_settings" (
+    "id" serial PRIMARY KEY NOT NULL,
+    "primary_color" varchar DEFAULT '#006C5B',
+    "secondary_color" varchar DEFAULT '#004F45',
+    "accent_color" varchar DEFAULT '#00A651',
+    "updated_at" timestamp(3) with time zone DEFAULT now() NOT NULL,
+    "created_at" timestamp(3) with time zone DEFAULT now() NOT NULL
+  )`,
+
+  // ====================================================
+  // ✏️ THÊM MIGRATION MỚI Ở ĐÂY (cuối danh sách)
+  // Ví dụ khi thêm field mới vào Articles:
+  //   `ALTER TABLE "articles" ADD COLUMN IF NOT EXISTS "featured" boolean DEFAULT false`,
+  // ====================================================
 ];
