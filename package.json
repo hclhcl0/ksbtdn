@@ -3,8 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "concurrently \"tailwindcss -i src/app/(frontend)/globals.css -o src/app/(frontend)/globals-compiled.css --watch\" \"next dev\"",
-    "build": "node migrate.mjs && tailwindcss -i src/app/(frontend)/globals.css -o src/app/(frontend)/globals-compiled.css && next build",
+    "dev": "concurrently \"tailwindcss -i \\\"src/app/(frontend)/globals.css\\\" -o \\\"src/app/(frontend)/globals-compiled.css\\\" --watch\" \"next dev\"",
+    "build": "node migrate.mjs && tailwindcss -i \"src/app/(frontend)/globals.css\" -o \"src/app/(frontend)/globals-compiled.css\" && next build",
     "start": "next start",
     "lint": "eslint",
     "payload": "payload",
