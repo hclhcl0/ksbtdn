@@ -98,8 +98,11 @@ export default buildConfig({
           connectionString: dbUrl,
         },
         // Schema đã được sync lần đầu. Tắt push ở production để tránh deadlock.
-        // Muốn sync schema mới: dùng PAYLOAD_FORCE_PUSH=true trong Vercel env vars
-        push: process.env.PAYLOAD_FORCE_PUSH === 'true' ? true : process.env.NODE_ENV !== 'production',
+        // Muốn sync schema mới: dùng PAYLOAD_FORCE_PUSH=true trong Vercel/Coolify env vars
+        push: (() => {
+          const val = String(process.env.PAYLOAD_FORCE_PUSH).toLowerCase().trim();
+          return val === 'true' || val === '1' || val === 'yes' || process.env.NODE_ENV !== 'production';
+        })(),
       })
     : sqliteAdapter({
         client: {
