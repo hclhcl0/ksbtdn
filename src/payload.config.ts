@@ -97,13 +97,12 @@ export default buildConfig({
         pool: {
           connectionString: dbUrl,
         },
-        // push: true  => Payload tự động sync schema khi khởi động (an toàn với single-instance).
-        // Đặt PAYLOAD_DISABLE_PUSH=true để tắt nếu cần tối ưu cold-start sau khi schema đã ổn định.
+        // push: false — Schema được quản lý bởi migrate.mjs (chạy trước next build).
+        // Drizzle push ở production sẽ hỏi interactive → treo Docker container.
+        // Để force sync 1 lần (khi có schema mới lớn): đặt PAYLOAD_FORCE_PUSH=true tạm thời.
         push: (() => {
-          const disableVal = String(process.env.PAYLOAD_DISABLE_PUSH).toLowerCase().trim();
-          if (disableVal === 'true' || disableVal === '1' || disableVal === 'yes') return false;
-          // Mặc định: luôn bật push để đảm bảo schema được tạo khi DB trống (first-boot)
-          return true;
+          const val = String(process.env.PAYLOAD_FORCE_PUSH).toLowerCase().trim();
+          return val === 'true' || val === '1' || val === 'yes';
         })(),
       })
     : sqliteAdapter({

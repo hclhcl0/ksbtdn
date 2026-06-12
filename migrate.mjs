@@ -47,11 +47,11 @@ async function run() {
     
     if (!dbExists) {
       console.log('ℹ️  Cơ sở dữ liệu trống (bảng "users" chưa tồn tại).');
-      console.log('ℹ️  Bỏ qua chạy migration thủ công ở bước build. Payload CMS sẽ tự động khởi tạo schema ở runtime.');
-      return;
+      console.log('ℹ️  DB trống — chạy toàn bộ migration để khởi tạo schema...');
+      // KHÔNG bỏ qua — tiếp tục chạy tất cả statements bên dưới
+    } else {
+      console.log('ℹ️  Phát hiện database hiện có. Kiểm tra và áp dụng migration mới...');
     }
-
-    console.log(`📦 Phát hiện database hiện có. Tiến hành chạy các bản vá migration (tổng số: ${MIGRATION_STATEMENTS.length})...`);
     let ok = 0, skipped = 0, failed = 0;
 
     for (let i = 0; i < MIGRATION_STATEMENTS.length; i++) {

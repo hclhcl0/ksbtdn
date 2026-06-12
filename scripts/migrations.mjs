@@ -673,8 +673,12 @@ export const MIGRATION_STATEMENTS = [
   )`,
 
   // ====================================================
-  // ✏️ THÊM MIGRATION MỚI Ở ĐÂY (cuối danh sách)
-  // Ví dụ khi thêm field mới vào Articles:
-  //   `ALTER TABLE "articles" ADD COLUMN IF NOT EXISTS "featured" boolean DEFAULT false`,
+  // BATCH 11 – theme_settings: thêm cột org_colors_*
+  // Payload CMS tạo tên cột theo pattern: {groupSlug}_{fieldName}
+  // group 'orgColors' + field 'ban_lanh_dao' → 'org_colors_ban_lanh_dao'
   // ====================================================
+  `ALTER TABLE "theme_settings" ADD COLUMN IF NOT EXISTS "org_colors_ban_lanh_dao" varchar DEFAULT '#0d47a1'`,
+  `ALTER TABLE "theme_settings" ADD COLUMN IF NOT EXISTS "org_colors_phong" varchar DEFAULT '#2e7d32'`,
+  `ALTER TABLE "theme_settings" ADD COLUMN IF NOT EXISTS "org_colors_khoa" varchar DEFAULT '#1976d2'`,
+  `ALTER TABLE "theme_settings" ADD COLUMN IF NOT EXISTS "org_colors_khac" varchar DEFAULT '#e65100'`,
 ];
