@@ -102,8 +102,109 @@ export const Articles: CollectionConfig = {
         return data;
       },
     ],
+    afterChange: [
+      async ({ doc, previousDoc, req }) => {
+        // Trigger broadcast only on state change to published
+        if (
+          doc._status === 'published' &&
+          previousDoc?._status !== 'published' &&
+          doc.autoZaloBroadcast
+        ) {
+          try {
+            const { prisma } = await import('../lib/zalo-admin/prisma');
+            const { sendPromotionMessage } = await import('../lib/zalo-admin/zalo');
+            // Find all followers
+            const followers = await prisma.follower.findMany({
+              select: { zaloUserId: true }
+            });
+            const userIds = followers.map(f => f.zaloUserId);
+            
+            if (userIds.length > 0) {
+              const baseUrl = process.env.NEXT_PUBLIC_SERVER_URL || process.env.PAYLOAD_PUBLIC_SERVER_URL || 'http://localhost:3000';
+              const fullUrl = `${baseUrl}/bai-viet/${doc.slug}`;
+              const coverUrl = doc.image && typeof doc.image === 'object' ? doc.image.url : '';
+
+              // Build payload for list message with 1 item
+              const broadcastData = {
+                scope: "all",
+                messageType: "list",
+                elements: [{
+                  title: doc.title.substring(0, 120),
+                  subtitle: doc.description ? doc.description.substring(0, 120) : doc.title.substring(0, 120),
+                  imageUrl: coverUrl,
+                  actionType: "oa.open.url",
+                  actionValue: fullUrl
+                }]
+              };
+              
+              const payloadStr = JSON.stringify(broadcastData);
+
+              // Create log entry
+              const broadcastLog = await prisma.zaloBroadcast.create({
+                data: {
+                  scope: "all",
+                  content: doc.title,
+                  rawPayload: payloadStr,
+                  total: userIds.length,
+                  sentCount: 0,
+                  successCount: 0,
+                  failCount: 0,
+                  status: "sending",
+                  createdBy: req.user?.name || "Hệ thống Tự động",
+                },
+              });
+
+              // Send in background without blocking the request
+              setTimeout(async () => {
+                let success = 0;
+                let fail = 0;
+
+                for (const uid of userIds) {
+                  try {
+                    const result = await sendPromotionMessage(uid, broadcastData);
+                    if (result && result.error === 0) {
+                      success++;
+                    } else {
+                      fail++;
+                    }
+                  } catch (err) {
+                    fail++;
+                  }
+                  // Small delay to respect rate limits
+                  await new Promise(res => setTimeout(res, 100));
+                }
+
+                await prisma.zaloBroadcast.update({
+                  where: { id: broadcastLog.id },
+                  data: {
+                    status: "completed",
+                    sentCount: success + fail,
+                    successCount: success,
+                    failCount: fail,
+                    completedAt: new Date(),
+                  },
+                });
+              }, 100);
+            }
+          } catch (e) {
+            console.error("Auto Zalo Broadcast Error:", e);
+          }
+        }
+        return doc;
+      }
+    ],
   },
   fields: [
+    {
+      name: 'autoZaloBroadcast',
+      type: 'checkbox',
+      label: 'Tự động gửi lên Zalo OA ngay khi xuất bản',
+      defaultValue: false,
+      admin: {
+        position: 'sidebar',
+        description: 'Chỉ có tác dụng khi trạng thái bài viết chuyển sang Đã xuất bản.',
+      },
+    },
     {
       name: 'title',
       type: 'text',

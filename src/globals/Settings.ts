@@ -540,6 +540,54 @@ export const Settings: GlobalConfig = {
       ],
     },
     {
+      name: 'aiChatSettings',
+      type: 'group',
+      label: '🤖 Cài đặt AI Chat (Hỏi đáp tự động)',
+      admin: {
+        description: 'Cấu hình widget hỏi đáp AI hiển thị cho người dân trên website.',
+      },
+      fields: [
+        {
+          name: 'chatEnabled',
+          type: 'checkbox',
+          label: 'Bật widget AI Chat trên website',
+          defaultValue: true,
+          admin: {
+            description: 'Tích vào để hiển thị nút chat AI ở góc dưới phải trang web.',
+          },
+        },
+        {
+          name: 'geminiApiKeys',
+          type: 'textarea',
+          label: 'Gemini API Keys',
+          admin: {
+            description: 'Nhập mỗi API key trên một dòng riêng. Hệ thống tự xoay vòng (round-robin) để tránh giới hạn tốc độ. Lấy key miễn phí tại: aistudio.google.com',
+            rows: 6,
+            placeholder: 'AIzaSy...\nAIzaSy...',
+          },
+        },
+        {
+          name: 'chatWelcomeMessage',
+          type: 'text',
+          label: 'Tin nhắn chào mừng',
+          defaultValue: 'Xin chào! Tôi là Trợ lý AI của CDC Đà Nẵng. Tôi có thể giúp gì cho bạn hôm nay?',
+          admin: {
+            description: 'Tin nhắn đầu tiên AI hiển thị khi người dùng mở hộp chat.',
+          },
+        },
+        {
+          name: 'chatCustomPrompt',
+          type: 'textarea',
+          label: 'Hướng dẫn bổ sung cho AI (tùy chọn)',
+          admin: {
+            description: 'Các quy tắc đặc biệt muốn AI tuân theo. Để trống nếu không cần.',
+            rows: 4,
+            placeholder: 'Ví dụ: Luôn nhắc hotline 1900988975 ở cuối mỗi câu trả lời...',
+          },
+        },
+      ],
+    },
+    {
       name: 'sidebarWidgets',
       type: 'blocks',
       label: 'Các Tiện Ích Thanh Bên (Sidebar Widgets)',

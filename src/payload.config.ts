@@ -32,10 +32,15 @@ import { VideoChannels } from './collections/VideoChannels.ts';
 import { FormSubmissions } from './collections/FormSubmissions.ts';
 import { OrgUnits } from './collections/OrgUnits.ts';
 
+
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
 
 export default buildConfig({
+  onInit: async (payload) => {
+    const { initCron } = await import('./lib/zalo-admin/cron.js');
+    initCron();
+  },
   admin: {
     user: 'users',
     css: path.resolve(dirname, 'admin.css'),
@@ -44,6 +49,7 @@ export default buildConfig({
         Logo: '@/app/(payload)/admin/components/AdminLogo.tsx#AdminLogo',
         Icon: '@/app/(payload)/admin/components/AdminIcon.tsx#AdminIcon',
       },
+      afterNavLinks: ['@/components/ZaloAdminLink#ZaloAdminLink'],
       beforeDashboard: [
         '@/app/(payload)/admin/components/AuthorWelcome.tsx#AuthorWelcome',
         '@/app/(payload)/admin/components/YouTubeSyncButton.tsx#YouTubeSyncButton',

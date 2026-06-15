@@ -681,4 +681,27 @@ export const MIGRATION_STATEMENTS = [
   `ALTER TABLE "theme_settings" ADD COLUMN IF NOT EXISTS "org_colors_phong" varchar DEFAULT '#2e7d32'`,
   `ALTER TABLE "theme_settings" ADD COLUMN IF NOT EXISTS "org_colors_khoa" varchar DEFAULT '#1976d2'`,
   `ALTER TABLE "theme_settings" ADD COLUMN IF NOT EXISTS "org_colors_khac" varchar DEFAULT '#e65100'`,
+
+  // ====================================================
+  // BATCH 12 – ai_settings global
+  // ====================================================
+  `CREATE TABLE IF NOT EXISTS "ai_settings" (
+    "id" serial PRIMARY KEY NOT NULL,
+    "chat_enabled" boolean DEFAULT true,
+    "gemini_api_keys" text,
+    "chat_welcome_message" varchar DEFAULT 'Xin chào! Tôi là Trợ lý AI của CDC Đà Nẵng. Tôi có thể giúp gì cho bạn hôm nay?',
+    "chat_custom_prompt" text,
+    "updated_at" timestamp(3) with time zone DEFAULT now() NOT NULL,
+    "created_at" timestamp(3) with time zone DEFAULT now() NOT NULL
+  )`,
+
+  // ====================================================
+  // BATCH 13 – Add aiChatSettings columns to settings table + department to users
+  // ====================================================
+  `ALTER TABLE "settings" ADD COLUMN IF NOT EXISTS "ai_chat_settings_chat_enabled" boolean DEFAULT true`,
+  `ALTER TABLE "settings" ADD COLUMN IF NOT EXISTS "ai_chat_settings_gemini_api_keys" text`,
+  `ALTER TABLE "settings" ADD COLUMN IF NOT EXISTS "ai_chat_settings_chat_welcome_message" varchar DEFAULT 'Xin chào! Tôi là Trợ lý AI của CDC Đà Nẵng. Tôi có thể giúp gì cho bạn hôm nay?'`,
+  `ALTER TABLE "settings" ADD COLUMN IF NOT EXISTS "ai_chat_settings_chat_custom_prompt" text`,
+  `ALTER TABLE "users" ADD COLUMN IF NOT EXISTS "department" varchar`,
 ];
+

@@ -3,6 +3,7 @@ import "./globals-compiled.css";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { BackToTop } from "@/components/BackToTop";
+import ChatWidget from "@/components/ChatWidget/ChatWidget";
 
 import { getPayload } from "payload";
 import configPromise from "@payload-config";
@@ -79,6 +80,7 @@ export default async function RootLayout({
         <main>{children}</main>
         <Footer />
         <BackToTop />
+        <ChatWidget />
       </body>
     </html>
   );
