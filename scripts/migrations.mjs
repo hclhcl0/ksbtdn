@@ -703,5 +703,11 @@ export const MIGRATION_STATEMENTS = [
   `ALTER TABLE "settings" ADD COLUMN IF NOT EXISTS "ai_chat_settings_chat_welcome_message" varchar DEFAULT 'Xin chào! Tôi là Trợ lý AI của CDC Đà Nẵng. Tôi có thể giúp gì cho bạn hôm nay?'`,
   `ALTER TABLE "settings" ADD COLUMN IF NOT EXISTS "ai_chat_settings_chat_custom_prompt" text`,
   `ALTER TABLE "users" ADD COLUMN IF NOT EXISTS "department" varchar`,
+
+  // ====================================================
+  // BATCH 14 – Add auto_zalo_broadcast to articles table
+  // ====================================================
+  `ALTER TABLE "articles" ADD COLUMN IF NOT EXISTS "auto_zalo_broadcast" boolean DEFAULT false`,
+  `ALTER TABLE "_articles_v" ADD COLUMN IF NOT EXISTS "version_auto_zalo_broadcast" boolean DEFAULT false`,
 ];
 
