@@ -1,5 +1,5 @@
 import { getPayload } from 'payload';
-import configPromise from './src/payload.config.ts';
+import configPromise from '../src/payload.config.ts';
 
 async function forcePush() {
   console.log('Force pushing Payload schema...');

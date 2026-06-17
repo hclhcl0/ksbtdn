@@ -4,12 +4,13 @@ providers = ["node"]
 HOSTNAME = '0.0.0.0'
 PORT = '3000'
 PAYLOAD_FORCE_PUSH = 'true'
+NIXPACKS_NODE_VERSION = '20'
 
 [phases.install]
 cmds = ['npm ci --legacy-peer-deps']
 
 [phases.build]
-cmds = ['npm run build']
+cmds = ['npm run build', 'cp -r public .next/standalone/public', 'cp -r .next/static .next/standalone/.next/static']
 
 [start]
 cmd = 'node .next/standalone/server.js'
