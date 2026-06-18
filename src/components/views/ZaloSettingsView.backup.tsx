@@ -2,10 +2,7 @@
 
 import { useState, useEffect, useCallback, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
-import { Plus, Trash2, Eye, EyeOff, AlertCircle, Copy, Link, Bot, Mail, Building2, Search, RefreshCw, Book, Key } from "lucide-react";
-
-import ApiKeysTab from "./tabs/ApiKeysTab";
-import AiKnowledgeTab from "./tabs/AiKnowledgeTab";
+import { Plus, Trash2, Eye, EyeOff, AlertCircle, Copy, Link, Bot, Mail, Building2, Search, RefreshCw } from "lucide-react";
 
 // Các nhóm cài đặt
 const SETTING_GROUPS = [
@@ -25,20 +22,6 @@ const SETTING_GROUPS = [
     readonly: [
       { label: "URL Webhook (đã deploy)", value: "{SITE_URL}/api/zalo/webhook", note: "Thay {SITE_URL} bằng domain thực tế của bạn." },
     ],
-  },
-  {
-    id: "ai_knowledge",
-    icon: <Book className="w-5 h-5" />,
-    title: "Kho tri thức AI",
-    desc: "Quản lý tài liệu và dữ liệu huấn luyện cho AI.",
-    fields: []
-  },
-  {
-    id: "api_keys",
-    icon: <Key className="w-5 h-5" />,
-    title: "Danh sách API Keys",
-    desc: "Quản lý và cấu hình các API Key cho Gemini, Groq.",
-    fields: []
   },
   {
     id: "ai_data",
@@ -583,7 +566,7 @@ function SettingsPageContent() {
             -webkit-overflow-scrolling: touch;
             width: 100%;
             box-sizing: border-box;
-            background: var(--theme-elevation-50);
+            background: white;
             border-radius: 12px;
             border: 1px solid #e2e8f0;
           }
@@ -628,24 +611,65 @@ function SettingsPageContent() {
               style={{
                 display: "flex", alignItems: "center", gap: "8px",
                 padding: "10px 20px",
-                background: activeTab === group.id ? "var(--theme-elevation-150)" : "transparent",
-                color: activeTab === group.id ? "var(--theme-text)" : "var(--theme-text)",
+                background: activeTab === group.id ? "#3b82f6" : "var(--theme-elevation-50)",
+                color: activeTab === group.id ? "white" : "var(--theme-text)",
                 border: "1px solid",
-                borderColor: activeTab === group.id ? "var(--theme-elevation-200)" : "var(--theme-elevation-100)",
+                borderColor: activeTab === group.id ? "#3b82f6" : "var(--theme-elevation-150)",
                 borderRadius: "12px",
                 cursor: "pointer",
                 fontWeight: activeTab === group.id ? 600 : 500,
                 fontSize: "0.9rem",
                 whiteSpace: "nowrap",
                 transition: "all 0.15s",
-                boxShadow: activeTab === group.id ? "0 2px 8px rgba(0,0,0,0.15)" : "none",
+                boxShadow: activeTab === group.id ? "0 2px 8px rgba(0,0,0,0.1)" : "none",
               }}
             >
               <span>{group.icon}</span>
               {group.title}
             </button>
           ))}
-          
+          <a
+            href="/admin/collections/ai-knowledge"
+            style={{
+              display: "flex", alignItems: "center", gap: "8px",
+              padding: "10px 20px",
+              background: "var(--theme-elevation-50)",
+              color: "var(--theme-text)",
+              border: "1px solid",
+              borderColor: "var(--theme-elevation-150)",
+              borderRadius: "12px",
+              cursor: "pointer",
+              fontWeight: 500,
+              fontSize: "0.9rem",
+              whiteSpace: "nowrap",
+              transition: "all 0.15s",
+              boxShadow: "none",
+              textDecoration: "none",
+            }}
+          >
+            <span>📂</span> Kho tri thức AI
+          </a>
+          <a
+            href="/admin/collections/api-keys"
+            style={{
+              display: "flex", alignItems: "center", gap: "8px",
+              padding: "10px 20px",
+              background: "var(--theme-elevation-50)",
+              color: "var(--theme-text)",
+              border: "1px solid",
+              borderColor: "var(--theme-elevation-150)",
+              borderRadius: "12px",
+              cursor: "pointer",
+              fontWeight: 500,
+              fontSize: "0.9rem",
+              whiteSpace: "nowrap",
+              transition: "all 0.15s",
+              boxShadow: "none",
+              textDecoration: "none",
+            }}
+          >
+            <span>🔑</span> Danh sách API Keys
+          </a>
         </div>
       </div>
 
@@ -755,7 +779,7 @@ function SettingsPageContent() {
                             onClick={() => setAddMode(m.id)}
                             style={{
                               padding: "6px 14px", fontSize: "0.875rem", fontWeight: addMode === m.id ? 700 : 500,
-                              background: addMode === m.id ? "var(--theme-elevation-200)" : "transparent",
+                              background: addMode === m.id ? "white" : "transparent",
                               border: "none", borderRadius: "6px", cursor: "pointer",
                               color: addMode === m.id ? "#3b82f6" : "var(--theme-text)",
                               boxShadow: addMode === m.id ? "0 1px 2px 0 rgba(0, 0, 0, 0.05)" : "none",
@@ -768,7 +792,7 @@ function SettingsPageContent() {
                       {/* Form App Password */}
                       {addMode === "apppass" && (
                         <div style={{ background: "var(--theme-elevation-50)", border: "1px solid var(--theme-elevation-150)", borderRadius: "12px", padding: "16px", marginBottom: "16px", display: "flex", flexDirection: "column", gap: "10px" }}>
-                          <div style={{ fontSize: "0.875rem", color: "var(--warning)", background: "rgba(245, 158, 11, 0.1)", border: "1px solid rgba(245, 158, 11, 0.3)", borderRadius: "6px", padding: "8px 12px", lineHeight: 1.6 }}>
+                          <div style={{ fontSize: "0.875rem", color: "#78350f", background: "#fffbeb", border: "1px solid #fde68a", borderRadius: "6px", padding: "8px 12px", lineHeight: 1.6 }}>
                             ⚠️ App Password có thể gặp lỗi <strong>454 Too many login attempts</strong>. Khuyến nghị dùng <strong>OAuth2</strong>.
                           </div>
                           <input type="email" placeholder="Email gửi (vd: cdc@gmail.com)" value={newEmail}
@@ -784,11 +808,11 @@ function SettingsPageContent() {
 
                       {/* Form OAuth2 */}
                       {addMode === "oauth2" && (
-                        <div style={{ background: "rgba(34, 197, 94, 0.1)", border: "1px solid rgba(34, 197, 94, 0.3)", borderRadius: "12px", padding: "16px", marginBottom: "16px", display: "flex", flexDirection: "column", gap: "12px" }}>
-                          <div style={{ fontSize: "0.9rem", color: "var(--success)", lineHeight: 1.6 }}>
+                        <div style={{ background: "#f0fdf4", border: "1px solid #bbf7d0", borderRadius: "12px", padding: "16px", marginBottom: "16px", display: "flex", flexDirection: "column", gap: "12px" }}>
+                          <div style={{ fontSize: "0.9rem", color: "#14532d", lineHeight: 1.6 }}>
                             ✅ <strong>OAuth2</strong> — Không cần App Password, không bị lỗi 454. Google cấp quyền trực tiếp.
                           </div>
-                          <div style={{ fontSize: "0.875rem", color: "var(--theme-text)", background: "var(--theme-elevation-50)", borderRadius: "6px", padding: "10px 12px", border: "1px solid var(--theme-elevation-150)", lineHeight: 1.7 }}>
+                          <div style={{ fontSize: "0.875rem", color: "var(--theme-text)", background: "white", borderRadius: "6px", padding: "10px 12px", border: "1px solid var(--theme-elevation-150)", lineHeight: 1.7 }}>
                             <strong>Yêu cầu trước:</strong> Điền <strong>Client ID</strong> và <strong>Client Secret</strong> vào ô bên phải rồi bấm Lưu cài đặt.<br/>
                             Sau đó nhập email Gmail muốn kết nối và bấm nút bên dưới.
                           </div>
@@ -819,11 +843,11 @@ function SettingsPageContent() {
                             return (
                               <div key={acc.id} style={{
                                 display: "flex", alignItems: "center", gap: "8px",
-                                background: isOAuth2 ? "rgba(34, 197, 94, 0.05)" : "var(--theme-elevation-50)",
+                                background: isOAuth2 ? "#f0fdf4" : "white",
                                 border: `1px solid ${isOAuth2 ? "#bbf7d0" : "var(--theme-elevation-150)"}`,
                                 borderRadius: "12px", padding: "8px 12px"
                               }}>
-                                <div style={{ width: 20, height: 20, borderRadius: "50%", background: isOAuth2 ? "#22c55e" : "var(--theme-elevation-150)", color: "#fff", fontSize: "0.7rem", fontWeight: "bold", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                                <div style={{ width: 20, height: 20, borderRadius: "50%", background: isOAuth2 ? "#22c55e" : "var(--theme-elevation-150)", color: "white", fontSize: "0.7rem", fontWeight: "bold", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
                                   {idx + 1}
                                 </div>
                                 <div style={{ flex: 1, minWidth: 0, fontSize: "0.9rem" }}>
@@ -880,7 +904,7 @@ function SettingsPageContent() {
                             onChange={(e) => handleChange("gmail_oauth_client_secret", e.target.value)}
                           />
                         </div>
-                        <div style={{ marginTop: "10px", fontSize: "0.72rem", color: "var(--theme-text)", lineHeight: 1.6, padding: "8px", background: "var(--theme-elevation-50)", borderRadius: "6px", border: "1px dashed #e2e8f0" }}>
+                        <div style={{ marginTop: "10px", fontSize: "0.72rem", color: "var(--theme-text)", lineHeight: 1.6, padding: "8px", background: "white", borderRadius: "6px", border: "1px dashed #e2e8f0" }}>
                           <strong>Redirect URI</strong> cần thêm vào Google Cloud:<br/>
                           <code style={{ fontSize: "0.7rem", wordBreak: "break-all", color: "#3b82f6" }}>
                             {typeof window !== "undefined" ? window.location.origin : "http://localhost:3000"}/api/auth/gmail-callback
@@ -925,23 +949,209 @@ function SettingsPageContent() {
 
               {/* UI cho tab Gemini AI Keys */}
               {activeGroup.id === "ai_data" && (
-                <div style={{ marginTop: "20px", borderTop: "1px solid var(--theme-elevation-150)", paddingTop: "20px" }}>
-                  <div style={{ marginBottom: "24px" }}>
-                    <div style={{ fontWeight: 700, marginBottom: "12px", fontSize: "1.1rem" }}>⚙️ Chọn Nhà Cung Cấp AI Chính</div>
-                    <div style={{ display: "flex", gap: "16px", color: "var(--theme-text)" }}>
-                      <label style={{ display: "flex", alignItems: "center", gap: "8px", cursor: "pointer" }}>
-                        <input type="radio" name="aiProvider" value="gemini" checked={values.ai_provider === "gemini" || !values.ai_provider} onChange={() => { handleChange("ai_provider", "gemini"); }} />
-                        <span>Google Gemini</span>
-                      </label>
-                      <label style={{ display: "flex", alignItems: "center", gap: "8px", cursor: "pointer" }}>
-                        <input type="radio" name="aiProvider" value="groq" checked={values.ai_provider === "groq"} onChange={() => { handleChange("ai_provider", "groq"); }} />
-                        <span>Groq (Llama-3)</span>
-                      </label>
+  <div style={{ marginTop: "20px", borderTop: "1px solid #e2e8f0", paddingTop: "20px" }}>
+    <div style={{ marginBottom: "24px" }}>
+      <div style={{ fontWeight: 700, marginBottom: "12px", fontSize: "1.1rem" }}>⚙️ Chọn Nhà Cung Cấp AI Chính</div>
+      <div style={{ display: "flex", gap: "16px" }}>
+        <label style={{ display: "flex", alignItems: "center", gap: "8px", cursor: "pointer" }}>
+          <input type="radio" name="aiProvider" value="gemini" checked={values.ai_provider === "gemini" || !values.ai_provider} onChange={() => { handleChange("ai_provider", "gemini"); }} />
+          <span>Google Gemini</span>
+        </label>
+        <label style={{ display: "flex", alignItems: "center", gap: "8px", cursor: "pointer" }}>
+          <input type="radio" name="aiProvider" value="groq" checked={values.ai_provider === "groq"} onChange={() => { handleChange("ai_provider", "groq"); }} />
+          <span>Groq (Llama-3)</span>
+        </label>
+      </div>
+    </div>
+
+    {(!values.ai_provider || values.ai_provider === "gemini") && (
+      <div>
+
+                <div style={{ marginTop: "20px", borderTop: "1px solid #e2e8f0", paddingTop: "20px" }}>
+
+                  {/* Thông báo */}
+                  {geminiKeyMsg && (
+                    <div style={{
+                      padding: "10px 14px", borderRadius: "8px", marginBottom: "16px", fontWeight: 600, fontSize: "1.1rem",
+                      background: geminiKeyMsg.type === "success" ? "#f0fdf4" : "#fef2f2",
+                      border: `1px solid ${geminiKeyMsg.type === "success" ? "#bbf7d0" : "#fecaca"}`,
+                      color: geminiKeyMsg.type === "success" ? "#15803d" : "#dc2626",
+                    }}>
+                      {geminiKeyMsg.type === "success" ? "✅" : "❌"} {geminiKeyMsg.text}
+                    </div>
+                  )}
+
+                  {/* Danh sách key hiện tại */}
+                  <div style={{ fontWeight: 700, marginBottom: "12px", fontSize: "1.1rem" }}>🔑 Danh sách API Keys ({geminiKeys.length} key)</div>
+                  {geminiKeysLoading ? (
+                    <div style={{ color: "var(--theme-text)", padding: "16px 0" }}>Đang tải...</div>
+                  ) : geminiKeys.length === 0 ? (
+                    <div style={{ padding: "20px", textAlign: "center", border: "1px dashed #e2e8f0", borderRadius: "8px", color: "var(--theme-text)", marginBottom: "20px" }}>
+                      Chưa có API Key nào. Hệ thống sẽ dùng key mặc định từ .env
+                    </div>
+                  ) : (
+                    <div style={{ display: "flex", flexDirection: "column", gap: "10px", marginBottom: "20px" }}>
+                      {geminiKeys.map((key, idx) => (
+                        <div key={key.id} style={{
+                          display: "flex", alignItems: "center", gap: "12px",
+                          padding: "12px 16px", background: key.isActive ? "#f0fdf4" : "#f8fafc",
+                          border: `1px solid ${key.isActive ? "#bbf7d0" : "var(--theme-elevation-150)"}`,
+                          borderRadius: "10px",
+                        }}>
+                          <div style={{
+                            width: "28px", height: "28px", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center",
+                            background: key.isActive ? "#22c55e" : "#cbd5e1", color: "white", fontWeight: 700, fontSize: "0.9rem", flexShrink: 0
+                          }}>{idx + 1}</div>
+                          <div style={{ flex: 1, minWidth: 0 }}>
+                            <div style={{ fontWeight: 600, fontSize: "1.1rem", color: "var(--theme-text)" }}>{key.label}</div>
+                            <div style={{ fontFamily: "monospace", fontSize: "0.875rem", color: "var(--theme-text)", marginTop: "2px" }}>{key.maskedKey}</div>
+                            <div style={{ fontSize: "0.875rem", color: "var(--theme-text)", marginTop: "4px" }}>
+                              🔄 {key.usageCount || 0} lượt • 🪙 {formatTokens(key.usageTokens)} tokens
+                            </div>
+                          </div>
+                          <div style={{ display: "flex", gap: "8px", alignItems: "center", flexShrink: 0 }}>
+                            <span style={{
+                              padding: "3px 8px", borderRadius: "20px", fontSize: "0.72rem", fontWeight: 700,
+                              background: key.isActive ? "#dcfce7" : "#f1f5f9",
+                              color: key.isActive ? "#16a34a" : "var(--theme-text)",
+                            }}>
+                              {key.isActive ? "● Đang dùng" : "○ Tắt"}
+                            </span>
+                            <button
+                              className="btn btn--style-secondary btn--size-small"
+                              onClick={() => handleToggleGeminiKey(key.id, key.isActive)}
+                              style={{ padding: "4px 10px" }}
+                            >
+                              {key.isActive ? "Tắt" : "Bật"}
+                            </button>
+                            <button
+                              className="btn btn--style-secondary btn--size-small btn--icon"
+                              onClick={() => handleDeleteGeminiKey(key.id)}
+                              style={{ color: "#ef4444", padding: "4px 10px" }}
+                            >
+                              🗑️
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* Form thêm key mới */}
+                  <div style={{ background: "#f8fafc", padding: "16px", borderRadius: "10px", border: "1px solid var(--theme-elevation-150)" }}>
+                    <div style={{ fontWeight: 700, fontSize: "1.1rem", marginBottom: "14px" }}>➕ Thêm API Key mới</div>
+                    <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+                      <div>
+                        <label className="block font-semibold text-base mb-2 " style={{ fontSize: "0.875rem" }}>Tên gợi nhớ</label>
+                        <input
+                          type="text"
+                          className="w-full px-4 py-2.5 bg-[var(--theme-input-bg)] border border-[color:var(--theme-elevation-200)] text-[color:var(--theme-text)] rounded-xl text-base outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all shadow-sm"
+                          placeholder="VD: Key CDC chính, Key dự phòng 1..."
+                          value={newGeminiLabel}
+                          onChange={(e) => setNewGeminiLabel(e.target.value)}
+                        />
+                      </div>
+                      <div>
+                        <label className="block font-semibold text-base mb-2 " style={{ fontSize: "0.875rem" }}>API Key (bắt đầu bằng AIza...)</label>
+                        <div style={{ position: "relative" }}>
+                          <input
+                            type={showNewGeminiKey ? "text" : "password"}
+                            className="w-full px-4 py-2.5 bg-[var(--theme-input-bg)] border border-[color:var(--theme-elevation-200)] text-[color:var(--theme-text)] rounded-xl text-base outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all shadow-sm"
+                            placeholder="AIzaSy..."
+                            value={newGeminiKey}
+                            onChange={(e) => setNewGeminiKey(e.target.value)}
+                            style={{ paddingRight: "44px", fontFamily: "monospace" }}
+                          />
+                          <button
+                            type="button"
+                            onClick={() => setShowNewGeminiKey(!showNewGeminiKey)}
+                            style={{ position: "absolute", right: "10px", top: "50%", transform: "translateY(-50%)", background: "none", border: "none", cursor: "pointer", color: "var(--theme-text)" }}
+                          >
+                            {showNewGeminiKey ? "🙈" : "👁️"}
+                          </button>
+                        </div>
+                      </div>
+                      <button
+                        type="button"
+                        className="btn btn--style-primary btn--size-medium"
+                        onClick={handleAddGeminiKey}
+                        disabled={addingGeminiKey}
+                        style={{ alignSelf: "flex-start", display: "flex", alignItems: "center", gap: "6px" }}
+                      >
+                        {addingGeminiKey && <span className="spinner" style={{ width: 12, height: 12 }} />}
+                        {addingGeminiKey ? "Đang thêm..." : "➕ Thêm API Key"}
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Hướng dẫn */}
+                  <div style={{ marginTop: "16px", padding: "12px 16px", background: "#eff6ff", borderRadius: "8px", border: "1px solid #bfdbfe", fontSize: "0.9rem", color: "#1e40af", lineHeight: 1.7 }}>
+                    <strong>💡 Cách hoạt động:</strong> Hệ thống sẽ tự động luân phiên (Round-Robin) qua từng API Key. Nếu một key bị rate limit (429), hệ thống tự chuyển sang key tiếp theo mà không gián đoạn dịch vụ. Key trong file <code>.env</code> vẫn là key dự phòng cuối cùng.
+                    <br /><br />
+                    <strong>🔗 Lấy API Key miễn phí:</strong> Truy cập <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener noreferrer" style={{ color: "#1d4ed8" }}>aistudio.google.com/app/apikey</a> rồi tạo key mới (mỗi tài khoản Google cho 1 key miễn phí).
+                  </div>
+                </div>
+              </div>
+              )}
+
+              {values.ai_provider === "groq" && (
+                <div>
+                  {groqKeyMsg && (
+                    <div style={{ padding: "10px 14px", borderRadius: "8px", marginBottom: "16px", fontWeight: 600, fontSize: "1.1rem", background: groqKeyMsg.type === "success" ? "#f0fdf4" : "#fef2f2", border: `1px solid ${groqKeyMsg.type === "success" ? "#bbf7d0" : "#fecaca"}`, color: groqKeyMsg.type === "success" ? "#15803d" : "#dc2626" }}>
+                      {groqKeyMsg.type === "success" ? "✅" : "❌"} {groqKeyMsg.text}
+                    </div>
+                  )}
+                  <div style={{ fontWeight: 700, marginBottom: "12px", fontSize: "1.1rem" }}>🔑 Danh sách Groq API Keys ({groqKeys.length} key)</div>
+                  {groqKeysLoading ? (
+                    <div style={{ color: "var(--theme-text)", padding: "16px 0" }}>Đang tải...</div>
+                  ) : groqKeys.length === 0 ? (
+                    <div style={{ padding: "20px", textAlign: "center", border: "1px dashed #e2e8f0", borderRadius: "8px", color: "var(--theme-text)", marginBottom: "20px" }}>
+                      Chưa có API Key nào. Vui lòng thêm Groq API Key bên dưới.
+                    </div>
+                  ) : (
+                    <div style={{ display: "flex", flexDirection: "column", gap: "10px", marginBottom: "20px" }}>
+                      {groqKeys.map((key, idx) => (
+                        <div key={key.id} style={{ display: "flex", alignItems: "center", gap: "12px", padding: "12px 16px", background: key.isActive ? "#f0fdf4" : "#f8fafc", border: `1px solid ${key.isActive ? "#bbf7d0" : "var(--theme-elevation-150)"}`, borderRadius: "10px" }}>
+                          <div style={{ width: "28px", height: "28px", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", background: key.isActive ? "#22c55e" : "#cbd5e1", color: "white", fontWeight: 700, fontSize: "0.9rem", flexShrink: 0 }}>{idx + 1}</div>
+                          <div style={{ flex: 1, minWidth: 0 }}>
+                            <div style={{ fontWeight: 600, fontSize: "1.1rem", color: "var(--theme-text)" }}>{key.label}</div>
+                            <div style={{ fontFamily: "monospace", fontSize: "0.875rem", color: "var(--theme-text)", marginTop: "2px" }}>{key.maskedKey}</div>
+                            <div style={{ fontSize: "0.875rem", color: "var(--theme-text)", marginTop: "4px" }}>
+                              🔄 {key.usageCount || 0} lượt • 🪙 {formatTokens(key.usageTokens)} tokens
+                            </div>
+                          </div>
+                          <div style={{ display: "flex", gap: "8px", alignItems: "center", flexShrink: 0 }}>
+                            <span style={{ padding: "3px 8px", borderRadius: "20px", fontSize: "0.72rem", fontWeight: 700, background: key.isActive ? "#dcfce7" : "#f1f5f9", color: key.isActive ? "#16a34a" : "var(--theme-text)" }}>{key.isActive ? "● Đang dùng" : "○ Tắt"}</span>
+                            <button className="btn btn--style-secondary btn--size-small" onClick={() => handleToggleGroqKey(key.id, key.isActive)} style={{ padding: "4px 10px" }}>{key.isActive ? "Tắt" : "Bật"}</button>
+                            <button className="btn btn--style-secondary btn--size-small btn--icon" onClick={() => handleDeleteGroqKey(key.id)} style={{ color: "#ef4444", padding: "4px 10px" }}>🗑️</button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                  <div style={{ background: "#f8fafc", padding: "16px", borderRadius: "10px", border: "1px solid var(--theme-elevation-150)" }}>
+                    <div style={{ fontWeight: 700, fontSize: "1.1rem", marginBottom: "14px" }}>➕ Thêm Groq API Key mới</div>
+                    <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+                      <div>
+                        <label className="block font-semibold text-base mb-2 " style={{ fontSize: "0.875rem" }}>Tên gợi nhớ</label>
+                        <input type="text" className="w-full px-4 py-2.5 bg-[var(--theme-input-bg)] border border-[color:var(--theme-elevation-200)] text-[color:var(--theme-text)] rounded-xl text-base outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all shadow-sm" placeholder="VD: Groq Key 1..." value={newGroqLabel} onChange={(e) => setNewGroqLabel(e.target.value)} />
+                      </div>
+                      <div>
+                        <label className="block font-semibold text-base mb-2 " style={{ fontSize: "0.875rem" }}>API Key (gsk_...)</label>
+                        <div style={{ position: "relative" }}>
+                          <input type={showNewGroqKey ? "text" : "password"} className="w-full px-4 py-2.5 bg-[var(--theme-input-bg)] border border-[color:var(--theme-elevation-200)] text-[color:var(--theme-text)] rounded-xl text-base outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all shadow-sm" placeholder="gsk_..." value={newGroqKey} onChange={(e) => setNewGroqKey(e.target.value)} style={{ paddingRight: "44px", fontFamily: "monospace" }} />
+                          <button type="button" onClick={() => setShowNewGroqKey(!showNewGroqKey)} style={{ position: "absolute", right: "10px", top: "50%", transform: "translateY(-50%)", background: "none", border: "none", cursor: "pointer", color: "var(--theme-text)" }}>{showNewGroqKey ? "🙈" : "👁️"}</button>
+                        </div>
+                      </div>
+                      <button type="button" className="btn btn--style-primary btn--size-medium" onClick={handleAddGroqKey} disabled={addingGroqKey} style={{ alignSelf: "flex-start", display: "flex", alignItems: "center", gap: "6px" }}>
+                        {addingGroqKey && <span className="spinner" style={{ width: 12, height: 12 }} />} {addingGroqKey ? "Đang thêm..." : "➕ Thêm API Key"}
+                      </button>
                     </div>
                   </div>
                 </div>
               )}
-
+            </div>
+          )}
             </div>
 
               {/* UI cho tab Kho tài liệu Drive */}
@@ -953,7 +1163,7 @@ function SettingsPageContent() {
                   </p>
                   
                   {values.drive_refresh_token && (
-                    <div style={{ padding: "10px 14px", borderRadius: "8px", marginBottom: "16px", fontWeight: 600, fontSize: "1.1rem", background: "rgba(34, 197, 94, 0.1)", border: "1px solid rgba(34, 197, 94, 0.3)", color: "#15803d" }}>
+                    <div style={{ padding: "10px 14px", borderRadius: "8px", marginBottom: "16px", fontWeight: 600, fontSize: "1.1rem", background: "#f0fdf4", border: "1px solid #bbf7d0", color: "#15803d" }}>
                       ✅ Hệ thống đã được cấp quyền truy cập Google Drive thành công!
                     </div>
                   )}
@@ -992,14 +1202,11 @@ function SettingsPageContent() {
                     {driveOAuthLoading && <span className="spinner" style={{ width: 14, height: 14 }} />}
                     {values.drive_refresh_token ? "🔄 Kết nối lại / Đổi tài khoản Drive" : "📂 Kết nối Google Drive"}
                   </button>
-                  <div style={{ marginTop: "16px", padding: "12px 16px", background: "rgba(59, 130, 246, 0.1)", borderRadius: "8px", border: "1px solid rgba(59, 130, 246, 0.3)", fontSize: "0.9rem", color: "var(--theme-text)", lineHeight: 1.7 }}>
+                  <div style={{ marginTop: "16px", padding: "12px 16px", background: "#eff6ff", borderRadius: "8px", border: "1px solid #bfdbfe", fontSize: "0.9rem", color: "#1e40af", lineHeight: 1.7 }}>
                     <strong>💡 Lưu ý:</strong> Thư mục Drive KHÔNG cần chia sẻ công khai. OAuth2 cho phép đọc file riêng tư trong Drive của bạn. Nhân viên nhận link xem — họ cần đăng nhập Google nội bộ để tải.
                   </div>
                 </div>
               )}
-
-              {activeGroup.id === "api_keys" && <ApiKeysTab />}
-              {activeGroup.id === "ai_knowledge" && <AiKnowledgeTab />}
 
 
             {(activeGroup.fields?.length > 0 || activeGroup.readonly?.length > 0 || (activeGroup.id === "oa_display" && values["map_embed_url"])) && (

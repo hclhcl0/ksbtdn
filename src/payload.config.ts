@@ -67,7 +67,6 @@ export default buildConfig({
 
       beforeDashboard: [
         '@/app/(payload)/admin/components/AuthorWelcome.tsx#AuthorWelcome',
-        '@/app/(payload)/admin/components/YouTubeSyncButton.tsx#YouTubeSyncButton',
       ]
     }
   },

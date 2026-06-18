@@ -9,6 +9,7 @@ import { ChevronRight, Phone, Mail, MapPin, Clock } from 'lucide-react';
 import { PageBlockRenderer } from '@/components/PageBlocks/PageBlockRenderer';
 import { SidebarRenderer } from '@/components/SidebarRenderer';
 import { ContactForm } from '@/components/ContactForm';
+import { OrgChartPageTemplate } from '@/components/OrgChartPageTemplate';
 
 // ─────────────────────────────────────────────
 // Data fetcher
@@ -35,9 +36,14 @@ async function getPageBySlug(slug: string) {
 export async function generateMetadata({
   params,
 }: {
-  params: Promise<{ slug: string }>;
+  params: Promise<{ slug: string[] }>;
 }): Promise<Metadata> {
-  const { slug } = await params;
+  const { slug: slugArray } = await params;
+  const slug = slugArray.join('/');
+
+  let orgSlug = 'gioi-thieu/co-cau-to-chuc';
+
+  if (slug === orgSlug) return { title: 'Cơ cấu tổ chức — CDC Đà Nẵng' };
   const page = await getPageBySlug(slug);
   if (!page) return { title: 'Không tìm thấy trang | CDC Đà Nẵng' };
 
@@ -140,9 +146,16 @@ function ContactPageTemplate({ page }: { page: any }) {
 export default async function DynamicPage({
   params,
 }: {
-  params: Promise<{ slug: string }>;
+  params: Promise<{ slug: string[] }>;
 }) {
-  const { slug } = await params;
+  const { slug: slugArray } = await params;
+  const slug = slugArray.join('/');
+
+  let orgSlug = 'gioi-thieu/co-cau-to-chuc';
+
+  if (slug === orgSlug) {
+    return <OrgChartPageTemplate slug={slug} />;
+  }
   const page = await getPageBySlug(slug);
 
   if (!page) notFound();

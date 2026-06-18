@@ -1,18 +1,10 @@
-import type { Metadata } from 'next';
+import React from 'react';
 import { getPayload } from 'payload';
 import configPromise from '@payload-config';
 import { OrgChart } from '@/components/OrgChart';
 import { OrgAccordion } from '@/components/OrgAccordion';
 
-export const metadata: Metadata = {
-  title: 'Cơ cấu tổ chức — Trung tâm Kiểm soát Bệnh tật TP. Đà Nẵng',
-  description: 'Cơ cấu tổ chức của Trung tâm Kiểm soát Bệnh tật Thành phố Đà Nẵng, bao gồm Ban Giám đốc, các Phòng chức năng và Khoa chuyên môn.',
-};
-
-// Revalidate every hour
-export const revalidate = 3600;
-
-export default async function CoCoToChucPage() {
+export async function OrgChartPageTemplate({ slug }: { slug: string }) {
   const payload = await getPayload({ config: configPromise });
 
   const orgUnitsRes = await payload.find({
@@ -22,7 +14,6 @@ export default async function CoCoToChucPage() {
     depth: 1,
   });
 
-  // findGlobal có thể ném lỗi nếu DB chưa migrate xong sau khi deploy
   let themeColors: Record<string, string> = {};
   try {
     const themeSettings = await payload.findGlobal({ slug: 'theme-settings' });
@@ -33,8 +24,22 @@ export default async function CoCoToChucPage() {
 
   const orgUnits = orgUnitsRes.docs;
 
-  const leadership = orgUnits.filter((u: any) => u.unitType === 'ban_lanh_dao');
-  const departments = orgUnits.filter((u: any) => u.unitType !== 'ban_lanh_dao');
+  // Render breadcrumb components based on the dynamic slug
+  const slugParts = slug.split('/');
+  const breadcrumbItems = slugParts.map((part, index) => {
+    const isLast = index === slugParts.length - 1;
+    const title = part === 'gioi-thieu' ? 'Giới thiệu' : part === 'co-cau-to-chuc' ? 'Cơ cấu tổ chức' : part;
+    return (
+      <React.Fragment key={index}>
+        <span aria-hidden="true">›</span>
+        {isLast ? (
+          <span aria-current="page">{title}</span>
+        ) : (
+          <a href={`/${slugParts.slice(0, index + 1).join('/')}`}>{title}</a>
+        )}
+      </React.Fragment>
+    );
+  });
 
   return (
     <main className="co-cau-to-chuc-page">
@@ -43,10 +48,7 @@ export default async function CoCoToChucPage() {
         <div className="container">
           <nav className="breadcrumb" aria-label="Breadcrumb">
             <a href="/">Trang chủ</a>
-            <span aria-hidden="true">›</span>
-            <a href="/gioi-thieu">Giới thiệu</a>
-            <span aria-hidden="true">›</span>
-            <span aria-current="page">Cơ cấu tổ chức</span>
+            {breadcrumbItems}
           </nav>
           <h1>Cơ cấu Tổ chức</h1>
           <p className="hero-subtitle">Trung tâm Kiểm soát Bệnh tật Thành phố Đà Nẵng</p>

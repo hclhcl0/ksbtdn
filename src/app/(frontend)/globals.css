@@ -21,6 +21,21 @@
   --radius-3xl: 12px;
 }
 
+/* Custom Scrollbar cho Sidebar */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #cbd5e1; /* slate-300 */
+  border-radius: 4px;
+}
+.custom-scrollbar:hover::-webkit-scrollbar-thumb {
+  background: #94a3b8; /* slate-400 */
+}
+
 :root {
   /* ── Màu chủ đạo ── */
   --primary:       #007a8c;

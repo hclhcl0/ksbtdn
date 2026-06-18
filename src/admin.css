@@ -273,16 +273,16 @@ html[data-theme="light"], :root {
 
 /* DARK MODE VARIABLES */
 html[data-theme="dark"] {
-  --tw-bg: #0f172a; /* slate-900 */
-  --tw-card: #1e293b; /* slate-800 */
-  --tw-border: #334155; /* slate-700 */
+  --tw-bg: #09090b; /* slate-900 */
+  --tw-card: #0f1115; /* slate-800 */
+  --tw-border: #1c1f26; /* slate-700 */
   --tw-text-main: #cbd5e1; /* slate-300 */
   --tw-text-muted: #94a3b8; /* slate-400 */
   --tw-text-hover: #f8fafc; /* slate-50 */
   
   --tw-primary: #3b82f6; /* blue-500 */
   --tw-primary-hover: #60a5fa; /* blue-400 */
-  --tw-nav-active-bg: #1e3a8a; /* blue-900 */
+  --tw-nav-active-bg: transparent; /* blue-900 */
   --tw-nav-active-text: #bfdbfe; /* blue-200 */
   
   --tw-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
@@ -306,7 +306,7 @@ code, pre, kbd, samp, .code {
 }
 
 /* CARDS & PANELS */
-.card, .panel, .dashboard__card, .collection-list, .document-drawer__content {
+.card, .panel, .dashboard__card, .document-drawer__content {
   background-color: var(--tw-card) !important;
   border: 1px solid var(--tw-border) !important;
   border-radius: 16px !important;
@@ -508,4 +508,82 @@ html[data-theme="dark"] .btn--style-primary {
 
 html[data-theme="dark"] .btn--style-primary:hover {
   background: linear-gradient(180deg, #6366f1 0%, #4f46e5 100%) !important; /* Indigo 500 to 600 */
+}
+
+
+/* ==========================================
+   FIX PAYLOAD CMS LIST TABLES IN DARK MODE
+   ========================================== */
+html[data-theme="dark"] .collection-list .table,
+html[data-theme="dark"] .collection-list table {
+  background-color: transparent !important;
+  color: var(--theme-text) !important;
+}
+
+html[data-theme="dark"] .collection-list th,
+html[data-theme="dark"] .collection-list .table-header {
+  background-color: var(--theme-elevation-100) !important;
+  color: var(--theme-text) !important;
+  border-color: var(--theme-border) !important;
+}
+
+html[data-theme="dark"] .collection-list td,
+html[data-theme="dark"] .collection-list .cell {
+  color: var(--theme-text) !important;
+  border-color: var(--theme-border) !important;
+}
+
+html[data-theme="dark"] .collection-list tr,
+html[data-theme="dark"] .collection-list .row {
+  background-color: transparent !important;
+  border-color: var(--theme-border) !important;
+}
+
+html[data-theme="dark"] .collection-list tr:nth-child(even),
+html[data-theme="dark"] .collection-list .row:nth-child(even) {
+  background-color: rgba(255, 255, 255, 0.02) !important;
+}
+
+html[data-theme="dark"] .collection-list tr:hover,
+html[data-theme="dark"] .collection-list .row:hover {
+  background-color: rgba(255, 255, 255, 0.05) !important;
+}
+
+/* Fix text colors inside the table */
+html[data-theme="dark"] .collection-list th *,
+html[data-theme="dark"] .collection-list td * {
+  color: inherit;
+}
+
+html[data-theme="dark"] .collection-list a {
+  color: #60a5fa !important;
+}
+html[data-theme="dark"] .collection-list a:hover {
+  color: #93c5fd !important;
+  text-decoration: underline;
+}
+
+html[data-theme="dark"] .collection-list input[type="checkbox"],
+html[data-theme="dark"] .checkbox-input {
+  background-color: var(--theme-elevation-150) !important;
+  border: 1px solid var(--theme-border) !important;
+  color: var(--tw-primary) !important;
+}
+
+html[data-theme="dark"] .collection-list input[type="checkbox"]:checked,
+html[data-theme="dark"] .checkbox-input--checked {
+  background-color: var(--tw-primary) !important;
+  border-color: var(--tw-primary) !important;
+}
+
+/* Fix generic payload table row */
+html[data-theme="dark"] table tr {
+  background-color: transparent !important;
+}
+html[data-theme="dark"] table th {
+  background-color: var(--theme-elevation-50) !important;
+  color: var(--theme-text) !important;
+}
+html[data-theme="dark"] table td {
+  color: var(--theme-text) !important;
 }
