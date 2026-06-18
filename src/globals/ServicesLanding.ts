@@ -4,7 +4,7 @@ export const ServicesLanding: GlobalConfig = {
   slug: 'servicesLanding',
   label: 'Cấu hình Landing Dịch vụ',
   admin: {
-    group: 'Dịch vụ & Sản phẩm',
+    group: 'Dịch vụ sản phẩm',
   },
   access: {
     read: () => true,

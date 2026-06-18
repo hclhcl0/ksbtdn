@@ -18,11 +18,11 @@ export const metadata: Metadata = {
 };
 
 function hexToRgb(hex: string | undefined | null) {
-  if (!hex) return '0, 122, 140';
+  if (!hex) return '58, 127, 199';
   const shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
   const hexFull = hex.replace(shorthandRegex, (m, r, g, b) => r + r + g + g + b + b);
   const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hexFull);
-  return result ? `${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)}` : '0, 122, 140';
+  return result ? `${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)}` : '58, 127, 199';
 }
 
 // Map font value → tên font thực tế (có dấu cách)
@@ -44,8 +44,8 @@ export default async function RootLayout({
     console.error("Error fetching settings in layout:", e);
   }
 
-  const primaryColor = themeConfig?.primaryColor || '#007a8c';
-  const primaryDarkColor = themeConfig?.primaryDarkColor || '#005a68';
+  const primaryColor = themeConfig?.primaryColor || '#3a7fc7';
+  const primaryDarkColor = themeConfig?.primaryDarkColor || '#0055a7';
   const secondaryColor = themeConfig?.secondaryColor || '#4999d6';
   const primaryRgb = hexToRgb(primaryColor);
 

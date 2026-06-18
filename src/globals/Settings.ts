@@ -148,24 +148,24 @@ export const Settings: GlobalConfig = {
           name: 'primaryColor',
           type: 'text',
           label: 'Màu chủ đạo (Primary Color)',
-          defaultValue: '#007a8c',
+          defaultValue: '#3a7fc7',
           admin: {
             components: {
               Field: '@/components/ColorPickerField.tsx#ColorPickerField',
             },
-            description: 'Màu chính của trang web (VD: #007a8c).',
+            description: 'Màu chính của trang web (VD: #3a7fc7).',
           }
         },
         {
           name: 'primaryDarkColor',
           type: 'text',
           label: 'Màu chủ đạo đậm (Hover)',
-          defaultValue: '#005a68',
+          defaultValue: '#0055a7',
           admin: {
             components: {
               Field: '@/components/ColorPickerField.tsx#ColorPickerField',
             },
-            description: 'Màu khi rê chuột (hover) vào các nút bấm hoặc liên kết (VD: #005a68).',
+            description: 'Màu khi rê chuột (hover) vào các nút bấm hoặc liên kết (VD: #0055a7).',
           }
         },
         {
@@ -654,6 +654,81 @@ export const Settings: GlobalConfig = {
           ]
         }
       ]
+    },
+    {
+      name: 'articleReaderTools',
+      type: 'group',
+      label: '📖 Tiện ích Đọc bài viết',
+      admin: {
+        description: 'Bật/tắt các nút tiện ích hiển thị trong trang đọc bài viết. Thay đổi có hiệu lực ngay sau khi lưu.',
+      },
+      fields: [
+        {
+          name: 'showFontSize',
+          type: 'checkbox',
+          label: 'Cỡ chữ (A / A+ / A++)',
+          defaultValue: true,
+          admin: { description: 'Hiển thị nhóm nút thay đổi cỡ chữ bài viết.' },
+        },
+        {
+          name: 'showTTS',
+          type: 'checkbox',
+          label: 'Đọc bài viết (Text-to-Speech)',
+          defaultValue: true,
+          admin: { description: 'Hiển thị nút nghe đọc nội dung bài viết bằng giọng nói.' },
+        },
+        {
+          name: 'showShareFB',
+          type: 'checkbox',
+          label: 'Chia sẻ Facebook',
+          defaultValue: true,
+          admin: { description: 'Hiển thị nút chia sẻ bài viết lên Facebook.' },
+        },
+        {
+          name: 'showShareZalo',
+          type: 'checkbox',
+          label: 'Chia sẻ Zalo',
+          defaultValue: true,
+          admin: { description: 'Hiển thị nút chia sẻ bài viết qua Zalo.' },
+        },
+        {
+          name: 'showGoogleNews',
+          type: 'checkbox',
+          label: 'Nút theo dõi Google News',
+          defaultValue: false,
+          admin: { description: 'Hiển thị nút kêu gọi người đọc theo dõi kênh trên Google News.' },
+        },
+        {
+          name: 'googleNewsUrl',
+          type: 'text',
+          label: 'Đường dẫn (URL) Kênh Google News',
+          admin: { 
+            description: 'Ví dụ: https://news.google.com/publications/CAAqBwg...',
+            condition: (data, siblingData) => siblingData?.showGoogleNews === true,
+          },
+        },
+        {
+          name: 'showCopyLink',
+          type: 'checkbox',
+          label: 'Chép link bài viết',
+          defaultValue: true,
+          admin: { description: 'Hiển thị nút sao chép đường dẫn bài viết vào clipboard.' },
+        },
+        {
+          name: 'showPrint',
+          type: 'checkbox',
+          label: 'In trang',
+          defaultValue: true,
+          admin: { description: 'Hiển thị nút in nội dung bài viết.' },
+        },
+        {
+          name: 'showReadProgress',
+          type: 'checkbox',
+          label: 'Thanh tiến trình đọc bài (Reading Progress Bar)',
+          defaultValue: true,
+          admin: { description: 'Hiển thị thanh màu chạy dọc theo đầu trang khi người đọc cuộn xuống.' },
+        },
+      ],
     },
   ],
 };

@@ -1,14 +1,14 @@
-@import url('https://fonts.googleapis.com/css2?family=Geist+Mono:wght@100..900&family=Geist:wght@100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Geist+Mono:wght@100..900&family=Geist:wght@100..900&display=swap');
 
 .ContentEditable__root {
-  font-family: inherit !important;
+  font-family: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji" !important;
 }
 
 /* Optional: Additional Lexical typography fixes */
 .ContentEditable__root p, 
 .ContentEditable__root span, 
 .ContentEditable__root div {
-  font-family: inherit !important;
+  font-family: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji" !important;
 }
 
 /* ==========================================
@@ -266,8 +266,8 @@ html[data-theme="light"], :root {
   --tw-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px -1px rgba(0, 0, 0, 0.05);
   --tw-shadow-focus: 0 0 0 3px rgba(59, 130, 246, 0.15);
   
-  --font-body: 'Geist', 'Inter', system-ui, -apple-system, sans-serif !important;
-  --font-heading: 'Geist', 'Inter', system-ui, -apple-system, sans-serif !important;
+  --font-body: 'Inter', 'Geist', system-ui, -apple-system, sans-serif !important;
+  --font-heading: 'Inter', 'Geist', system-ui, -apple-system, sans-serif !important;
   --font-mono: 'Geist Mono', monospace !important;
 }
 

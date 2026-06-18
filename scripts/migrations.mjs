@@ -886,5 +886,18 @@ export const MIGRATION_STATEMENTS = [
   // ====================================================
   `ALTER TABLE "categories" ADD COLUMN IF NOT EXISTS "icon" varchar`,
   `ALTER TABLE "categories" ADD COLUMN IF NOT EXISTS "color" varchar`,
-  `ALTER TABLE "categories" ADD COLUMN IF NOT EXISTS "order_num" numeric DEFAULT 0`
+  `ALTER TABLE "categories" ADD COLUMN IF NOT EXISTS "order_num" numeric DEFAULT 0`,
+
+  // ====================================================
+  // BATCH 26 – Thêm group articleReaderTools vào settings
+  // ====================================================
+  `ALTER TABLE "settings" ADD COLUMN IF NOT EXISTS "article_reader_tools_show_font_size" boolean`,
+  `ALTER TABLE "settings" ADD COLUMN IF NOT EXISTS "article_reader_tools_show_t_t_s" boolean`,
+  `ALTER TABLE "settings" ADD COLUMN IF NOT EXISTS "article_reader_tools_show_share_f_b" boolean`,
+  `ALTER TABLE "settings" ADD COLUMN IF NOT EXISTS "article_reader_tools_show_share_zalo" boolean`,
+  `ALTER TABLE "settings" ADD COLUMN IF NOT EXISTS "article_reader_tools_show_google_news" boolean`,
+  `ALTER TABLE "settings" ADD COLUMN IF NOT EXISTS "article_reader_tools_google_news_url" varchar`,
+  `ALTER TABLE "settings" ADD COLUMN IF NOT EXISTS "article_reader_tools_show_copy_link" boolean`,
+  `ALTER TABLE "settings" ADD COLUMN IF NOT EXISTS "article_reader_tools_show_print" boolean`,
+  `ALTER TABLE "settings" ADD COLUMN IF NOT EXISTS "article_reader_tools_show_read_progress" boolean`
 ];

@@ -33,7 +33,7 @@ export const MainMenu: GlobalConfig = {
       defaultValue: [
         { label: 'Home', url: '/' },
         { label: 'Giới thiệu', url: '/category/gioi-thieu/' },
-        { label: 'Sức khỏe', url: '/category/van-de-suc-khoe/' },
+        { label: 'Sức khỏe', url: '/suc-khoe' },
         { label: 'Dịch vụ', url: '/category/hoat-dong-dich-vu/' },
         { label: 'Đào tạo', url: '/category/dao-tao/' },
         { label: 'Công đoàn', url: '/category/hoat-dong-cong-doan/' },

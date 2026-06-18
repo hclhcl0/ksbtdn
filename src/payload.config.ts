@@ -53,8 +53,8 @@ const dirname = path.dirname(filename);
 
 export default buildConfig({
   onInit: async (payload) => {
-    const { initCron } = await import('./lib/zalo-admin/cron.js');
-    initCron();
+    // const { initCron } = await import('./lib/zalo-admin/cron.js');
+    // initCron();
   },
   admin: {
     user: 'users',
@@ -143,7 +143,7 @@ export default buildConfig({
       })
     : sqliteAdapter({
         client: {
-          url: 'file:./payload-data.db',
+          url: process.env.SQLITE_URL || 'file:./payload-data.db',
         },
       }),
   typescript: {

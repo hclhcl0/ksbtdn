@@ -9,7 +9,7 @@ export const ServiceCategories: CollectionConfig = {
   admin: {
     useAsTitle: 'name',
     defaultColumns: ['name', 'slug', 'order'],
-    group: 'Dịch vụ - Sản phẩm',
+    group: 'Dịch vụ sản phẩm',
   },
   access: {
     read: () => true,

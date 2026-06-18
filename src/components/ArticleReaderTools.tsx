@@ -66,7 +66,44 @@ const AudioIcon = () => (
   </svg>
 );
 
-export function ArticleReaderTools() {
+const GoogleNewsIcon = () => (
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" xmlns="http://www.w3.org/2000/svg">
+    <path d="M14 2H6a2 2 0 0 0-2 2v16c0 1.1.9 2 2 2h12a2 2 0 0 0 2-2V8l-6-6z" />
+    <path d="M14 3v5h5M16 13H8M16 17H8M10 9H8" />
+  </svg>
+);
+
+export type ReaderToolsConfig = {
+  showFontSize?: boolean;
+  showTTS?: boolean;
+  showShareFB?: boolean;
+  showShareZalo?: boolean;
+  showGoogleNews?: boolean;
+  googleNewsUrl?: string | null;
+  showCopyLink?: boolean;
+  showPrint?: boolean;
+  showReadProgress?: boolean;
+};
+
+export function ArticleReaderTools({
+  mode = "all",
+  toolsConfig,
+}: {
+  mode?: "all" | "tts" | "tools";
+  toolsConfig?: ReaderToolsConfig;
+}) {
+  // Default all tools ON if no config supplied
+  const cfg: Required<ReaderToolsConfig> = {
+    showFontSize:    toolsConfig?.showFontSize    ?? true,
+    showTTS:         toolsConfig?.showTTS         ?? true,
+    showShareFB:     toolsConfig?.showShareFB     ?? true,
+    showShareZalo:   toolsConfig?.showShareZalo   ?? true,
+    showGoogleNews:  toolsConfig?.showGoogleNews  ?? false,
+    googleNewsUrl:   toolsConfig?.googleNewsUrl   ?? "",
+    showCopyLink:    toolsConfig?.showCopyLink    ?? true,
+    showPrint:       toolsConfig?.showPrint       ?? true,
+    showReadProgress:toolsConfig?.showReadProgress?? true,
+  };
   const [fontSize, setFontSize] = useState<"normal" | "large" | "xlarge">("normal");
   const [copied, setCopied] = useState(false);
   const [currentUrl, setCurrentUrl] = useState("");
@@ -487,62 +524,63 @@ export function ArticleReaderTools() {
   };
 
   return (
-    <div className="no-print reader-tools">
+    <div className={`no-print ${mode === "tts" ? "flex items-center gap-2" : "reader-tools"}`}>
       {/* Font adjustment group */}
+      {(mode === "all" || mode === "tools") && cfg.showFontSize && (
       <div className="reader-tools-group">
-        <span className="flex items-center gap-1 text-gray-500 font-medium">
-          <TypeIcon />
-          Cỡ chữ:
-        </span>
         <button
           onClick={() => setFontSize("normal")}
-          className={`font-size-btn ${fontSize === "normal" ? "active" : ""}`}
+          className={`reader-tools-btn font-size-btn w-10 h-10 shrink-0 min-w-[40px] ${fontSize === "normal" ? "bg-gov-primary text-white" : ""}`}
+          title="Cỡ chữ thường"
         >
           A
         </button>
         <button
           onClick={() => setFontSize("large")}
-          className={`font-size-btn ${fontSize === "large" ? "active" : ""}`}
+          className={`reader-tools-btn font-size-btn w-10 h-10 shrink-0 min-w-[40px] ${fontSize === "large" ? "bg-gov-primary text-white" : ""}`}
+          title="Cỡ chữ lớn"
         >
           A+
         </button>
         <button
           onClick={() => setFontSize("xlarge")}
-          className={`font-size-btn ${fontSize === "xlarge" ? "active" : ""}`}
+          className={`reader-tools-btn font-size-btn w-10 h-10 shrink-0 min-w-[40px] ${fontSize === "xlarge" ? "bg-gov-primary text-white" : ""}`}
+          title="Cỡ chữ rất lớn"
         >
           A++
         </button>
       </div>
+      )}
 
       {/* TTS Audio Controls group */}
-      {isSupported && (
-        <div className="reader-tools-group">
-          <span className="flex items-center gap-1 text-gray-500 font-medium">
+      {isSupported && cfg.showTTS && (mode === "all" || mode === "tts") && (
+        <div className={mode === "tts" ? "flex items-center gap-2 flex-row flex-wrap" : "reader-tools-group"}>
+          <span className="reader-tools-label">
             <AudioIcon />
-            Nghe bài viết:
+            <span className="reader-tools-btn-text hidden">Nghe bài viết:</span>
           </span>
           <button
             onClick={handlePlayPause}
-            className={`reader-tools-btn ${isPlaying && !isPaused ? "bg-gov-primary text-white border-gov-primary hover:bg-gov-primary-dark" : "bg-white text-gray-800"}`}
+            className={`reader-tools-btn w-10 h-10 shrink-0 min-w-[40px] ${isPlaying && !isPaused ? "bg-gov-primary text-white border-gov-primary hover:bg-gov-primary-dark" : "bg-white text-gray-800"}`}
             title={isPlaying && !isPaused ? "Tạm dừng" : "Đọc bài viết"}
           >
             {isPlaying && !isPaused ? <PauseIcon /> : <PlayIcon />}
-            {isPlaying && !isPaused ? "Tạm dừng" : isPaused ? "Tiếp tục" : "Đọc bài"}
+            <span className="reader-tools-btn-text hidden">{isPlaying && !isPaused ? "Tạm dừng" : isPaused ? "Tiếp tục" : "Đọc bài"}</span>
           </button>
           
           {isPlaying && (
             <button
               onClick={handleStop}
-              className="reader-tools-btn bg-white text-red-600 border-red-200 hover:bg-red-50"
+              className="reader-tools-btn w-10 h-10 shrink-0 min-w-[40px] bg-white text-red-600 border-red-200 hover:bg-red-50"
               title="Dừng đọc"
             >
               <StopIcon />
-              Dừng
+              <span className="reader-tools-btn-text hidden">Dừng</span>
             </button>
           )}
 
           {isPlaying && (
-            <div className="flex items-center gap-1 border border-gray-200 rounded-lg bg-white px-2 py-1">
+            <div className="flex items-center gap-1 border border-gray-200 rounded-lg bg-white px-2 py-1 h-[40px]">
               <span className="text-xs text-gray-500 font-medium">Tốc độ:</span>
               <select
                 value={playbackRate}
@@ -558,12 +596,12 @@ export function ArticleReaderTools() {
           )}
           
           {isPlaying && voices.length > 1 && (
-            <div className="flex items-center gap-1 border border-gray-200 rounded-lg bg-white px-2 py-1">
+            <div className="flex items-center gap-1 border border-gray-200 rounded-lg bg-white px-2 py-1 h-[40px]">
               <span className="text-xs text-gray-500 font-medium">Giọng:</span>
               <select
                 value={selectedVoice}
                 onChange={(e) => handleVoiceChange(e.target.value)}
-                className="text-xs font-semibold bg-transparent border-none outline-none cursor-pointer text-gray-700 max-w-[120px] truncate"
+                className="text-xs font-semibold bg-transparent border-none outline-none cursor-pointer text-gray-700 max-w-[100px] truncate"
               >
                 {voices.map(v => (
                   <option key={v.name} value={v.name}>
@@ -577,47 +615,67 @@ export function ArticleReaderTools() {
       )}
 
       {/* Share & Print Utilities group */}
+      {(mode === "all" || mode === "tools") && (cfg.showShareFB || cfg.showShareZalo || cfg.showCopyLink || cfg.showPrint) && (
       <div className="reader-tools-group">
         {/* Facebook Share */}
-        <button
-          onClick={handleShareFacebook}
-          className="reader-tools-btn reader-tools-btn-fb"
-          title="Chia sẻ lên Facebook"
-        >
-          <FacebookIcon />
-          Chia sẻ
-        </button>
+        {cfg.showShareFB && (
+          <button
+            onClick={handleShareFacebook}
+            className="reader-tools-btn reader-tools-btn-fb w-10 h-10 shrink-0 min-w-[40px]"
+            title="Chia sẻ lên Facebook"
+          >
+            <FacebookIcon />
+            <span className="reader-tools-btn-text hidden">Chia sẻ</span>
+          </button>
+        )}
+
+        {/* Google News */}
+        {cfg.showGoogleNews && cfg.googleNewsUrl && (
+          <a
+            href={cfg.googleNewsUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="reader-tools-btn reader-tools-btn-gnews w-10 h-10 flex items-center justify-center shrink-0 min-w-[40px] border border-gray-200"
+            title="Theo dõi trên Google News"
+          >
+            <GoogleNewsIcon />
+            <span className="reader-tools-btn-text hidden">Google News</span>
+          </a>
+        )}
 
         {/* Zalo Share */}
+        {cfg.showShareZalo && (
         <button
           onClick={handleShareZalo}
-          className="reader-tools-btn reader-tools-btn-zalo"
+          className="reader-tools-btn reader-tools-btn-zalo w-10 h-10 shrink-0 min-w-[40px]"
           title="Chia sẻ lên Zalo"
         >
-          <span className="font-bold text-[10px] tracking-tighter mr-0.5">ZALO</span>
-          Chia sẻ
+          <span className="font-bold text-[10px] tracking-tighter">ZALO</span>
+          <span className="reader-tools-btn-text hidden">Chia sẻ</span>
         </button>
+        )}
 
         {/* Copy Link */}
-        <button
+        {cfg.showCopyLink && (<button
           onClick={handleCopyLink}
-          className={`reader-tools-btn reader-tools-btn-copy ${copied ? "copied" : ""}`}
+          className={`reader-tools-btn reader-tools-btn-copy w-10 h-10 shrink-0 min-w-[40px] ${copied ? 'copied' : ''}`}
           title="Sao chép đường dẫn bài viết"
         >
           {copied ? <CheckIcon /> : <CopyIcon />}
-          {copied ? "Đã chép link!" : "Chép link"}
-        </button>
+          <span className="reader-tools-btn-text hidden">Chép link</span>
+        </button>)}
 
         {/* Print Button */}
-        <button
+        {cfg.showPrint && (<button
           onClick={handlePrint}
-          className="reader-tools-btn reader-tools-btn-print"
+          className="reader-tools-btn reader-tools-btn-print w-10 h-10 shrink-0 min-w-[40px]"
           title="In bài viết"
         >
           <PrinterIcon />
-          In trang
-        </button>
+          <span className="reader-tools-btn-text hidden">In trang</span>
+        </button>)}
       </div>
+      )}
     </div>
   );
 }

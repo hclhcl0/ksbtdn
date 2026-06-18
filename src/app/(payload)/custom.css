@@ -1,6 +1,8 @@
 /* Fix font hiển thị cho bộ gõ tiếng Việt trong khung soạn thảo Lexical */
-.payload-richtext-lexical div[contenteditable="true"],
-.ContentEditable__root {
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol" !important;
+.payload-richtext-lexical,
+.payload-richtext-lexical *,
+.ContentEditable__root,
+.ContentEditable__root * {
+  font-family: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji" !important;
   line-height: 1.6;
 }
