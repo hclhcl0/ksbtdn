@@ -8,3 +8,6 @@ NIXPACKS_NODE_VERSION = '20'
 
 [phases.install]
 cmds = ['npm ci --legacy-peer-deps']
+
+[phases.build]
+cmds = ['npm run build']
