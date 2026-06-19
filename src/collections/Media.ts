@@ -41,8 +41,11 @@ export const Media: CollectionConfig = {
     {
       name: 'alt',
       type: 'text',
-      required: true,
+      required: false,
       label: 'Mô tả Alt (SEO/Accessibility)',
+      admin: {
+        description: 'Nếu bỏ trống, hệ thống sẽ tự động tạo thẻ Alt dựa trên tên bài viết hoặc thông tin mặc định.',
+      }
     },
   ],
 };

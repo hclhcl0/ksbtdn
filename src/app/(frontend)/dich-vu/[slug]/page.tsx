@@ -54,7 +54,7 @@ export default async function ServiceDetailPage({
     // Basic rendering for Payload Lexical/Slate JSON structure
     if (typeof content === 'object' && content.root && content.root.children) {
       return (
-        <div className="prose prose-lg prose-teal max-w-none text-gray-700 leading-relaxed">
+        <div className="prose prose-base md:prose-lg max-w-none break-words prose-p:!my-1.5 md:prose-p:!my-2 prose-headings:!my-3 md:prose-headings:!my-4 prose-ul:!my-1 prose-li:!my-0.5 prose-img:!my-3 prose-headings:text-gov-primary prose-a:text-gov-secondary hover:prose-a:text-gov-primary prose-img:rounded-xl">
           {content.root.children.map((block: any, i: number) => {
             if (block.type === 'paragraph') {
               return (

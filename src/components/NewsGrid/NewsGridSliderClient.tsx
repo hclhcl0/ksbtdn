@@ -40,7 +40,7 @@ export const NewsGridSliderClient = ({ articles, desktopCols, mobileCols }: News
       >
         <div className={styles.emblaContainer}>
           {articles.map((article: any) => {
-            const mediaUrl = article.image?.url || 'https://via.placeholder.com/800x450?text=CDC+Da+Nang';
+            const mediaUrl = article.image?.url || '/logo.png';
             const date = new Date(article.createdAt).toLocaleDateString('vi-VN');
             const catName = article.category?.name || 'Tin tức';
 

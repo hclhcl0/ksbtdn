@@ -12,6 +12,7 @@ import { vi } from '@payloadcms/translations/languages/vi';
 const dbUrl = process.env.DATABASE_URI || process.env.POSTGRES_URL;
 
 import { Users } from './collections/Users.ts';
+import { Departments } from './collections/Departments.ts';
 import { Media } from './collections/Media.ts';
 import { Categories } from './collections/Categories.ts';
 import { Tags } from './collections/Tags.ts';
@@ -75,6 +76,7 @@ export default buildConfig({
     fallbackLanguage: 'vi',
   },
   collections: [
+    Departments,
     Users,
     Media,
     Categories,

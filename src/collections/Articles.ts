@@ -101,6 +101,30 @@ export const Articles: CollectionConfig = {
         }
         return data;
       },
+      // Extract first image from content if no image is provided
+      async ({ data }) => {
+        if (!data.image && data.content && data.content.root) {
+          // Recursive function to find first upload block
+          const findFirstImage = (nodes: any[]): any => {
+            for (const node of nodes) {
+              if (node.type === 'upload' && node.relationTo === 'media') {
+                return node.value?.id || node.value;
+              }
+              if (node.children) {
+                const found = findFirstImage(node.children);
+                if (found) return found;
+              }
+            }
+            return null;
+          };
+          
+          const firstImageId = findFirstImage(data.content.root.children || []);
+          if (firstImageId) {
+            data.image = firstImageId;
+          }
+        }
+        return data;
+      },
     ],
     afterChange: [
       async ({ doc, previousDoc, req }) => {

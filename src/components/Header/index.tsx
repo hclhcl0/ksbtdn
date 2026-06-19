@@ -14,7 +14,7 @@ export const Header = async () => {
     height: 52, position: 'left', showSiteName: true,
     line1: 'TRUNG TÂM KIỂM SOÁT BỆNH TẬT', line2: 'THÀNH PHỐ ĐÀ NẴNG',
     tagline: '', bannerImageUrl: '', mobileLogoUrl: '',
-    mobileHeight: 40, mobileShowSiteName: false, hoverEffect: 'scale-tilt',
+    mobileHeight: 52, mobileShowSiteName: false, hoverEffect: 'scale-tilt',
   };
   let searchConfig = { position: 'hotline', style: 'inline', width: 250 };
   let fb: any, tw: any, yt: any, ig: any;
@@ -40,7 +40,7 @@ export const Header = async () => {
       tagline: lc.siteTagline || '',
       bannerImageUrl: (lc.logoBannerImage as any)?.url || '',
       mobileLogoUrl: (lc.mobileLogo as any)?.url || '',
-      mobileHeight: lc.mobileLogoHeight || 40,
+      mobileHeight: lc.mobileLogoHeight || 52,
       mobileShowSiteName: lc.mobileShowSiteName === true,
       hoverEffect: lc.logoHoverEffect || 'scale-tilt',
     };

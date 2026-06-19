@@ -5,6 +5,7 @@ import { Plus, Trash2, Edit, X, Save } from "lucide-react";
 
 export default function AiKnowledgeTab() {
   const [items, setItems] = useState<any[]>([]);
+  const [departments, setDepartments] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [view, setView] = useState<"list" | "form">("list");
   
@@ -16,17 +17,23 @@ export default function AiKnowledgeTab() {
     content: "",
     sourceUrl: "",
     sourceExt: "",
-    allowedDepartment: ""
+    allowedDepartment: [] as number[]
   });
   const [saving, setSaving] = useState(false);
   const [msg, setMsg] = useState<{type: string, text: string} | null>(null);
 
-  const fetchItems = async () => {
+  const fetchData = async () => {
     setLoading(true);
     try {
-      const res = await fetch("/api/ai-knowledge?limit=100");
-      const json = await res.json();
-      if (json.docs) setItems(json.docs);
+      const [resItems, resDepts] = await Promise.all([
+        fetch("/api/ai-knowledge?limit=100"),
+        fetch("/api/departments?limit=100")
+      ]);
+      const jsonItems = await resItems.json();
+      const jsonDepts = await resDepts.json();
+      
+      if (jsonItems.docs) setItems(jsonItems.docs);
+      if (jsonDepts.docs) setDepartments(jsonDepts.docs);
     } catch (e) {
       console.error(e);
     } finally {
@@ -35,12 +42,12 @@ export default function AiKnowledgeTab() {
   };
 
   useEffect(() => {
-    fetchItems();
+    fetchData();
   }, []);
 
   const handleCreateNew = () => {
     setEditingId(null);
-    setFormData({ title: "", category: "", content: "", sourceUrl: "", sourceExt: "", allowedDepartment: "" });
+    setFormData({ title: "", category: "", content: "", sourceUrl: "", sourceExt: "", allowedDepartment: [] });
     setView("form");
     setMsg(null);
   };
@@ -53,7 +60,9 @@ export default function AiKnowledgeTab() {
       content: item.content || "",
       sourceUrl: item.sourceUrl || "",
       sourceExt: item.sourceExt || "",
-      allowedDepartment: item.allowedDepartment || ""
+      allowedDepartment: Array.isArray(item.allowedDepartment) 
+        ? item.allowedDepartment.map((d: any) => typeof d === 'object' ? d.id : d) 
+        : []
     });
     setView("form");
     setMsg(null);
@@ -64,7 +73,7 @@ export default function AiKnowledgeTab() {
     try {
       const res = await fetch(`/api/ai-knowledge/${id}`, { method: "DELETE" });
       if (res.ok) {
-        fetchItems();
+        fetchData();
       } else {
         alert("Lỗi khi xóa tài liệu.");
       }
@@ -84,10 +93,15 @@ export default function AiKnowledgeTab() {
       const url = editingId ? `/api/ai-knowledge/${editingId}` : "/api/ai-knowledge";
       const method = editingId ? "PATCH" : "POST";
       
+      const payload = { ...formData };
+      if (payload.allowedDepartment.length === 0) {
+        payload.allowedDepartment = null as any;
+      }
+
       const res = await fetch(url, {
         method,
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData)
+        body: JSON.stringify(payload)
       });
       const json = await res.json();
       
@@ -95,7 +109,7 @@ export default function AiKnowledgeTab() {
         setMsg({ type: "success", text: "Lưu tài liệu thành công!" });
         setTimeout(() => {
           setView("list");
-          fetchItems();
+          fetchData();
         }, 1000);
       } else {
         setMsg({ type: "error", text: json.errors?.[0]?.message || "Lưu thất bại" });
@@ -105,6 +119,17 @@ export default function AiKnowledgeTab() {
     } finally {
       setSaving(false);
     }
+  };
+
+  const toggleDepartment = (deptId: number) => {
+    setFormData(prev => {
+      const current = prev.allowedDepartment;
+      if (current.includes(deptId)) {
+        return { ...prev, allowedDepartment: current.filter(id => id !== deptId) };
+      } else {
+        return { ...prev, allowedDepartment: [...current, deptId] };
+      }
+    });
   };
 
   if (view === "form") {
@@ -150,7 +175,20 @@ export default function AiKnowledgeTab() {
           
           <div>
             <label style={{ display: "block", fontWeight: 600, marginBottom: "8px", color: "var(--theme-text)" }}>Phòng ban được phép xem</label>
-            <input type="text" className="w-full px-4 py-2.5 bg-[var(--theme-input-bg)] border border-[color:var(--theme-elevation-200)] text-[color:var(--theme-text)] rounded-xl outline-none focus:border-blue-500" value={formData.allowedDepartment} onChange={e => setFormData({...formData, allowedDepartment: e.target.value})} placeholder="Để trống cho tất cả" />
+            <div style={{ fontSize: "0.85rem", color: "var(--theme-text-muted)", marginBottom: "12px" }}>Chọn các phòng ban được truy cập. Bỏ trống = tất cả phòng ban đều xem được.</div>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(250px, 1fr))", gap: "10px", background: "var(--theme-input-bg)", padding: "16px", borderRadius: "12px", border: "1px solid var(--theme-elevation-200)", maxHeight: "250px", overflowY: "auto" }}>
+              {departments.map(dept => (
+                <label key={dept.id} style={{ display: "flex", alignItems: "center", gap: "8px", cursor: "pointer", color: "var(--theme-text)", fontSize: "0.9rem" }}>
+                  <input 
+                    type="checkbox" 
+                    checked={formData.allowedDepartment.includes(dept.id)}
+                    onChange={() => toggleDepartment(dept.id)}
+                    style={{ width: "16px", height: "16px", cursor: "pointer" }}
+                  />
+                  <span>{dept.name}</span>
+                </label>
+              ))}
+            </div>
           </div>
 
           <div style={{ marginTop: "16px", display: "flex", justifyContent: "flex-end" }}>
@@ -186,6 +224,7 @@ export default function AiKnowledgeTab() {
                 <tr style={{ borderBottom: "2px solid var(--theme-elevation-150)" }}>
                   <th style={{ padding: "12px 16px", color: "var(--theme-text)", fontWeight: 600 }}>Tên tài liệu</th>
                   <th style={{ padding: "12px 16px", color: "var(--theme-text)", fontWeight: 600 }}>Nhãn chuyên môn</th>
+                  <th style={{ padding: "12px 16px", color: "var(--theme-text)", fontWeight: 600 }}>Quyền xem</th>
                   <th style={{ padding: "12px 16px", color: "var(--theme-text)", fontWeight: 600, textAlign: "right" }}>Thao tác</th>
                 </tr>
               </thead>
@@ -197,6 +236,11 @@ export default function AiKnowledgeTab() {
                       <span style={{ padding: "4px 10px", background: "rgba(59, 130, 246, 0.15)", color: "#60a5fa", borderRadius: "20px", fontSize: "0.85rem", fontWeight: 600 }}>
                         {item.category}
                       </span>
+                    </td>
+                    <td style={{ padding: "16px", color: "var(--theme-text-muted)", fontSize: "0.9rem" }}>
+                      {Array.isArray(item.allowedDepartment) && item.allowedDepartment.length > 0 
+                        ? `${item.allowedDepartment.length} phòng ban`
+                        : "Tất cả"}
                     </td>
                     <td style={{ padding: "16px", textAlign: "right", display: "flex", gap: "8px", justifyContent: "flex-end" }}>
                       <button className="btn btn--style-secondary btn--size-small btn--icon" onClick={() => handleEdit(item)} title="Sửa"><Edit className="w-4 h-4" /></button>

@@ -318,8 +318,8 @@
 }
 
 .mobileDrawerTitle {
-  font-weight: 700;
-  font-size: var(--text-sm);
+  font-weight: 800;
+  font-size: 1.1rem;
   color: var(--primary);
 }
 
@@ -347,10 +347,10 @@
 .mobileDrawer > nav > ul > li > .mobileItemRow > a,
 .mobileDrawer > nav > ul > li > .mobileItemRow > span {
   display: block;
-  padding: 0.15rem 1.25rem 0.5rem 1.25rem;
+  padding: 0.75rem 1.25rem;
   font-weight: 600;
   color: var(--text-dark);
-  font-size: 0.8rem;
+  font-size: 1rem;
   border-bottom: 1px solid var(--border);
   transition: color var(--transition-base), background var(--transition-base);
 }
@@ -389,8 +389,8 @@
 }
 .mobileSubMenu li a {
   display: block;
-  padding: 0.5rem 1.25rem 0.5rem 2rem;
-  font-size: var(--text-xs);
+  padding: 0.75rem 1.25rem 0.75rem 2.25rem;
+  font-size: 0.9rem;
   color: var(--text-dark);
   border-bottom: 1px solid var(--border-light);
   transition: color var(--transition-base);
@@ -409,7 +409,6 @@
 }
 
 @media (max-width: 640px) {
-  .logo img { height: 40px; }
   .logoText { font-size: var(--text-xs); }
   .topBar { display: none; }
 }

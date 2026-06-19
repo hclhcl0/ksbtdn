@@ -99,7 +99,7 @@ export const NewsGrid = async ({ categoryId, categoryName, categorySlug, limitOv
         ) : layout === 'list' ? (
           <div className={styles.listContainer}>
             {articles.map((article: any) => {
-              const mediaUrl = article.image?.url || 'https://via.placeholder.com/800x450?text=CDC+Da+Nang';
+              const mediaUrl = article.image?.url || '/logo.png';
               const catName = article.category?.name || 'Tin tức';
               return (
                 <article key={article.id} className={styles.listItem}>
@@ -155,7 +155,7 @@ export const NewsGrid = async ({ categoryId, categoryName, categorySlug, limitOv
           (() => {
             const featuredArticle = articles[0];
             const sideArticles = articles.slice(1);
-            const featuredMediaUrl = featuredArticle.image?.url || 'https://via.placeholder.com/800x450?text=CDC+Da+Nang';
+            const featuredMediaUrl = featuredArticle.image?.url || '/logo.png';
             const featuredCatName = featuredArticle.category?.name || 'Tin tức';
 
             return (
@@ -193,7 +193,7 @@ export const NewsGrid = async ({ categoryId, categoryName, categorySlug, limitOv
                 {/* Right side: List of side articles */}
                 <div className={styles.sideList}>
                   {sideArticles.map((article: any) => {
-                    const sideMediaUrl = article.image?.url || 'https://via.placeholder.com/150x100?text=CDC';
+                    const sideMediaUrl = article.image?.url || '/logo.png';
                     const sideCatName = article.category?.name || 'Tin tức';
 
                     return (
@@ -230,7 +230,7 @@ export const NewsGrid = async ({ categoryId, categoryName, categorySlug, limitOv
             } as React.CSSProperties}
           >
             {articles.map((article: any) => {
-              const mediaUrl = article.image?.url || 'https://via.placeholder.com/800x450?text=CDC+Da+Nang';
+              const mediaUrl = article.image?.url || '/logo.png';
               const date = new Date(article.createdAt).toLocaleDateString('vi-VN');
               const catName = article.category?.name || 'Tin tức';
               

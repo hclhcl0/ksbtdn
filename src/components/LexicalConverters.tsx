@@ -26,9 +26,9 @@ function getGDriveEmbedUrl(url: string): { embedUrl: string; directUrl: string }
   return { embedUrl: url, directUrl: url };
 }
 
-export const jsxConverters = ({ defaultConverters }: any) => ({
+export const getJsxConverters = (fallbackAlt?: string) => ({ defaultConverters }: any) => ({
   ...defaultConverters,
-  upload: ({ node }: any) => <UploadBlock node={node} />,
+  upload: ({ node }: any) => <UploadBlock node={node} fallbackAlt={fallbackAlt} />,
   blocks: {
     columnsBlock: ({ node }: any) => {
       const { layout, col1, col2, col3 } = node.fields;
@@ -44,19 +44,19 @@ export const jsxConverters = ({ defaultConverters }: any) => ({
 
       return (
         <div className={`columns-block-grid ${layoutClass}`}>
-          <div><RichText data={col1} converters={jsxConverters} /></div>
-          <div><RichText data={col2} converters={jsxConverters} /></div>
-          {layout === 'third' && col3 && <div><RichText data={col3} converters={jsxConverters} /></div>}
+          <div><RichText data={col1} converters={getJsxConverters(fallbackAlt)} /></div>
+          <div><RichText data={col2} converters={getJsxConverters(fallbackAlt)} /></div>
+          {layout === 'third' && col3 && <div><RichText data={col3} converters={getJsxConverters(fallbackAlt)} /></div>}
         </div>
       );
     },
     videoBlock: ({ node }: any) => {
       const { source, youtubeId, customEmbed } = node.fields;
       if (source === 'youtube' && youtubeId) {
-        return <div className="aspect-video my-6 rounded-xl overflow-hidden"><iframe width="100%" height="100%" src={`https://www.youtube.com/embed/${youtubeId}`} title="YouTube" frameBorder="0" allowFullScreen></iframe></div>;
+        return <div className="aspect-video my-3 rounded-xl overflow-hidden"><iframe width="100%" height="100%" src={`https://www.youtube.com/embed/${youtubeId}`} title="YouTube" frameBorder="0" allowFullScreen></iframe></div>;
       }
       if (source === 'custom' && customEmbed) {
-         return <div className="aspect-video my-6 rounded-xl overflow-hidden" dangerouslySetInnerHTML={{ __html: customEmbed }} />
+         return <div className="aspect-video my-3 rounded-xl overflow-hidden" dangerouslySetInnerHTML={{ __html: customEmbed }} />
       }
       return null;
     },
@@ -73,7 +73,7 @@ export const jsxConverters = ({ defaultConverters }: any) => ({
              href={directUrl} 
              target="_blank" 
              rel="noopener noreferrer" 
-             className="inline-block bg-gov-primary text-white px-6 py-3 font-medium rounded-lg my-4 hover:bg-gov-secondary transition-colors"
+             className="inline-block bg-gov-primary text-white px-6 py-3 font-medium rounded-lg my-3 hover:bg-gov-secondary transition-colors"
            >
              Tải xuống tài liệu PDF
            </a>
@@ -83,7 +83,7 @@ export const jsxConverters = ({ defaultConverters }: any) => ({
       const isGDrive = url.includes('drive.google.com');
 
       return (
-        <div className="my-6">
+        <div className="my-3">
           <div className="aspect-[1/1.4] w-full rounded-xl overflow-hidden border border-gray-200 bg-gray-50 relative">
             <iframe 
               src={embedUrl} 
@@ -122,7 +122,7 @@ export const jsxConverters = ({ defaultConverters }: any) => ({
       else if (count >= 3) gridClass = 'grid-cols-2 md:grid-cols-3';
 
       return (
-        <div className={`grid ${gridClass} gap-3 my-6`}>
+        <div className={`grid ${gridClass} gap-3 my-3`}>
           {images.map((img: any, i: number) => (
             <div key={i} className="overflow-hidden rounded-xl border border-gray-100">
               <img
@@ -146,7 +146,7 @@ export const jsxConverters = ({ defaultConverters }: any) => ({
       if (type === 'danger') bg = 'bg-red-50 border-red-200 text-red-900';
       if (type === 'success') bg = 'bg-green-50 border-green-200 text-green-900';
       return (
-        <div className={`p-5 my-6 border rounded-xl ${bg}`}>
+        <div className={`p-5 my-3 border rounded-xl ${bg}`}>
           {title && <h4 className="font-bold text-lg mb-2">{title}</h4>}
           <p className="m-0 text-base">{content}</p>
         </div>
@@ -156,7 +156,7 @@ export const jsxConverters = ({ defaultConverters }: any) => ({
       const { label, url, style, openInNewTab } = node.fields;
       const css = style === 'primary' ? 'bg-gov-primary text-white hover:bg-gov-secondary' : 'border-2 border-gov-primary text-gov-primary hover:bg-gov-primary hover:text-white';
       return (
-        <div className="my-6">
+        <div className="my-3">
           <a href={url} target={openInNewTab ? '_blank' : '_self'} className={`inline-block px-8 py-3 rounded-full font-bold transition-all ${css}`}>
             {label}
           </a>
@@ -167,7 +167,7 @@ export const jsxConverters = ({ defaultConverters }: any) => ({
       const { title, articles } = node.fields;
       if (!articles?.length) return null;
       return (
-        <div className="my-8 bg-gray-50 p-6 rounded-xl border border-gray-100">
+        <div className="my-4 bg-gray-50 p-6 rounded-xl border border-gray-100">
           <h3 className="text-xl font-bold mb-4 text-gov-primary">{title}</h3>
           <ul className="space-y-3">
             {articles.map((art: any) => (
@@ -183,7 +183,7 @@ export const jsxConverters = ({ defaultConverters }: any) => ({
     cardBlock: ({ node }: any) => {
       const { image, title, description, linkUrl, linkLabel } = node.fields;
       return (
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden flex flex-col h-full my-6 hover:shadow-md transition-shadow">
+        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden flex flex-col h-full my-3 hover:shadow-md transition-shadow">
           {image && typeof image === 'object' && image.url && (
             <div className="aspect-[4/3] w-full overflow-hidden">
               <img src={image.url} alt={title} className="w-full h-full object-cover" />
@@ -210,7 +210,7 @@ export const jsxConverters = ({ defaultConverters }: any) => ({
       const containerStyle: React.CSSProperties = {
         display: 'flex',
         width: '100%',
-        margin: '2rem 0',
+        margin: '1rem 0',
       };
       
       if (alignment === 'left') {

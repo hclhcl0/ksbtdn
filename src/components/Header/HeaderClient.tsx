@@ -197,7 +197,7 @@ export const HeaderClient = ({ menuItems, menuPosition, logoUrl, logoConfig, sea
       {hotlinePosition === 'above-nav' && renderHotlineBar()}
       {/* Main Nav */}
       <div className={styles.mainNav}>
-        <div className={`container ${menuPosition === 'below' ? styles.logoRow : 'flex justify-between items-center'}`}>
+        <div className={`container py-3 md:py-4 ${menuPosition === 'below' ? styles.logoRow : 'flex justify-between items-center'}`}>
           {/* Logo — always shown (left or center) */}
           {menuPosition !== 'left' && (
             <LogoBlock logoUrl={logoUrl} siteName={siteName} logoConfig={logoConfig} styles={styles} />
@@ -391,7 +391,7 @@ function LogoBlock({ logoUrl, siteName, logoConfig, styles }: any) {
             className={styles.logoImg}
             style={{
               '--logo-height': `${logoConfig.height}px`,
-              '--mobile-logo-height': `${logoConfig.mobileHeight || 40}px`
+              '--mobile-logo-height': `${logoConfig.mobileHeight || 52}px`
             } as any}
           />
         </picture>

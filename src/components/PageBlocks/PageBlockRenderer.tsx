@@ -2,7 +2,7 @@ import React from 'react';
 
 // Existing block renderers (used in LexicalConverters)
 import { RichText } from '@payloadcms/richtext-lexical/react';
-import { jsxConverters } from '@/components/LexicalConverters';
+import { getJsxConverters } from '@/components/LexicalConverters';
 
 // New page block components
 import { PageRichTextBlock } from './RichTextBlock';
@@ -69,22 +69,26 @@ export function PageBlockRenderer({ blocks }: Props) {
 
           // ── Layout ──
           case 'columnsBlock': {
-            const layoutClass: Record<string, string> = {
-              half: 'columns-half',
-              third: 'columns-third',
-              twoThirdsLeft: 'columns-two-thirds-left',
-              twoThirdsRight: 'columns-two-thirds-right',
-            };
-            const cls = layoutClass[block.layout] || 'columns-half';
-            return (
-              <div key={key} className={`columns-block-grid ${cls} my-6`}>
-                <div><RichText data={block.col1} converters={jsxConverters} /></div>
-                <div><RichText data={block.col2} converters={jsxConverters} /></div>
-                {block.layout === 'third' && block.col3 && (
-                  <div><RichText data={block.col3} converters={jsxConverters} /></div>
-                )}
-              </div>
-            );
+            if (block.layout === 'half') {
+              return (
+                <div key={key} className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center my-6">
+                  <div><RichText data={block.col1} converters={getJsxConverters('Hình ảnh minh họa')} /></div>
+                  <div><RichText data={block.col2} converters={getJsxConverters('Hình ảnh minh họa')} /></div>
+                </div>
+              );
+            }
+            if (block.layout === 'third') {
+              return (
+                <div key={key} className="grid grid-cols-1 md:grid-cols-3 gap-6 my-6">
+                  <div><RichText data={block.col1} converters={getJsxConverters('Hình ảnh minh họa')} /></div>
+                  <div><RichText data={block.col2} converters={getJsxConverters('Hình ảnh minh họa')} /></div>
+                  {block.col3 && (
+                    <div><RichText data={block.col3} converters={getJsxConverters('Hình ảnh minh họa')} /></div>
+                  )}
+                </div>
+              );
+            }
+            return null;
           }
 
           case 'dividerBlock':

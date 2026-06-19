@@ -6,7 +6,7 @@ import configPromise from '@payload-config';
 import { HeroCarousel } from '@/components/HeroCarousel'
 import { NewsGrid } from '@/components/NewsGrid'
 import { RichText } from '@payloadcms/richtext-lexical/react';
-import { jsxConverters } from '@/components/LexicalConverters';
+import { getJsxConverters } from '@/components/LexicalConverters';
 import { HomeSectionRenderer } from '@/components/HomeSections/HomeSectionRenderer';
 
 export default async function HomePage() {
@@ -22,7 +22,7 @@ export default async function HomePage() {
       {homeContent && (
         <div className="container mx-auto px-4 py-8 max-w-7xl">
           <div className="prose prose-lg max-w-none prose-headings:text-gov-primary prose-a:text-gov-secondary hover:prose-a:text-gov-primary prose-img:rounded-xl">
-             <RichText data={homeContent} converters={jsxConverters} />
+             <RichText data={homeContent} converters={getJsxConverters('Hình ảnh minh họa trang chủ')} />
           </div>
         </div>
       )}

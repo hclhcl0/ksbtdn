@@ -18,6 +18,15 @@ export const AiKnowledge: CollectionConfig = {
     { name: 'embedding', type: 'text', label: 'Vector Embedding (JSON)' }, // Store as stringified JSON or text
     { name: 'sourceUrl', type: 'text', label: 'Link gốc (Google Drive...)' },
     { name: 'sourceExt', type: 'text', label: 'Đuôi file gốc' },
-    { name: 'allowedDepartment', type: 'text', label: 'Phòng ban được phép xem', admin: { description: 'Để trống hoặc "ALL" cho tất cả' } },
+    {
+      name: 'allowedDepartment',
+      type: 'relationship',
+      relationTo: 'departments',
+      hasMany: true,
+      label: 'Phòng ban được phép xem',
+      admin: {
+        description: 'Để trống = tất cả phòng ban đều có thể xem.',
+      },
+    },
   ],
 };

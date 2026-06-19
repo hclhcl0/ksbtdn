@@ -899,5 +899,41 @@ export const MIGRATION_STATEMENTS = [
   `ALTER TABLE "settings" ADD COLUMN IF NOT EXISTS "article_reader_tools_google_news_url" varchar`,
   `ALTER TABLE "settings" ADD COLUMN IF NOT EXISTS "article_reader_tools_show_copy_link" boolean`,
   `ALTER TABLE "settings" ADD COLUMN IF NOT EXISTS "article_reader_tools_show_print" boolean`,
-  `ALTER TABLE "settings" ADD COLUMN IF NOT EXISTS "article_reader_tools_show_read_progress" boolean`
+  `ALTER TABLE "settings" ADD COLUMN IF NOT EXISTS "article_reader_tools_show_read_progress" boolean`,
+
+  // ====================================================
+  // BATCH 27 – Thêm Collection departments + liên kết vào users
+  // ====================================================
+  `CREATE TABLE IF NOT EXISTS "departments" (
+    "id" serial PRIMARY KEY NOT NULL,
+    "name" varchar NOT NULL,
+    "code" varchar,
+    "type" varchar DEFAULT 'phong' NOT NULL,
+    "description" varchar,
+    "sort_order" numeric DEFAULT 0,
+    "updated_at" timestamp(3) with time zone DEFAULT now() NOT NULL,
+    "created_at" timestamp(3) with time zone DEFAULT now() NOT NULL
+  )`,
+  `CREATE UNIQUE INDEX IF NOT EXISTS "departments_code_idx" ON "departments" USING btree ("code")`,
+  `CREATE INDEX IF NOT EXISTS "departments_created_at_idx" ON "departments" USING btree ("created_at")`,
+
+  `CREATE TABLE IF NOT EXISTS "departments_rels" (
+    "id" serial PRIMARY KEY NOT NULL,
+    "order" integer,
+    "parent_id" integer NOT NULL,
+    "path" varchar NOT NULL,
+    "categories_id" integer,
+    CONSTRAINT "departments_rels_parent_fk"
+      FOREIGN KEY ("parent_id") REFERENCES "departments" ("id") ON DELETE cascade ON UPDATE no action,
+    CONSTRAINT "departments_rels_categories_fk"
+      FOREIGN KEY ("categories_id") REFERENCES "categories" ("id") ON DELETE cascade ON UPDATE no action
+  )`,
+  `CREATE INDEX IF NOT EXISTS "departments_rels_order_idx" ON "departments_rels" USING btree ("order")`,
+  `CREATE INDEX IF NOT EXISTS "departments_rels_parent_idx" ON "departments_rels" USING btree ("parent_id")`,
+  `CREATE INDEX IF NOT EXISTS "departments_rels_path_idx" ON "departments_rels" USING btree ("path")`,
+
+  // Thêm cột department_id vào bảng users (liên kết đến departments)
+  `ALTER TABLE "users" ADD COLUMN IF NOT EXISTS "department_id" integer`,
+  `ALTER TABLE "users" ADD CONSTRAINT "users_department_id_fk"
+    FOREIGN KEY ("department_id") REFERENCES "departments" ("id") ON DELETE set null ON UPDATE no action`
 ];

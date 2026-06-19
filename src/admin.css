@@ -587,3 +587,100 @@ html[data-theme="dark"] table th {
 html[data-theme="dark"] table td {
   color: var(--theme-text) !important;
 }
+
+/* ==========================================
+   FIX DROPDOWN MENU TRANSPARENT BACKGROUND
+   ========================================== */
+
+/* React-Select dropdown list (relationship fields) */
+.rs__menu,
+.rs__menu-list,
+[class*="rs__menu"],
+[class*="menu"] .rs__option,
+.react-select__menu,
+.react-select__menu-list {
+  background-color: var(--tw-card) !important;
+  border: 1px solid var(--tw-border) !important;
+  border-radius: 10px !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12) !important;
+  z-index: 9999 !important;
+}
+
+.rs__option,
+.react-select__option {
+  background-color: var(--tw-card) !important;
+  color: var(--tw-text-main) !important;
+}
+
+.rs__option:hover,
+.rs__option--is-focused,
+.react-select__option--is-focused {
+  background-color: var(--tw-bg) !important;
+  color: var(--tw-text-hover) !important;
+}
+
+.rs__option--is-selected,
+.react-select__option--is-selected {
+  background-color: var(--tw-primary) !important;
+  color: #ffffff !important;
+}
+
+/* Dark mode dropdown */
+html[data-theme="dark"] .rs__menu,
+html[data-theme="dark"] .rs__menu-list,
+html[data-theme="dark"] [class*="rs__menu"],
+html[data-theme="dark"] .react-select__menu,
+html[data-theme="dark"] .react-select__menu-list {
+  background-color: var(--theme-elevation-100) !important;
+  border: 1px solid var(--theme-border) !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5) !important;
+}
+
+html[data-theme="dark"] .rs__option,
+html[data-theme="dark"] .react-select__option {
+  background-color: var(--theme-elevation-100) !important;
+  color: var(--theme-text) !important;
+}
+
+html[data-theme="dark"] .rs__option:hover,
+html[data-theme="dark"] .rs__option--is-focused,
+html[data-theme="dark"] .react-select__option--is-focused {
+  background-color: var(--theme-elevation-200) !important;
+  color: var(--theme-text-hover) !important;
+}
+
+html[data-theme="dark"] .rs__option--is-selected,
+html[data-theme="dark"] .react-select__option--is-selected {
+  background-color: rgba(99, 102, 241, 0.25) !important;
+  color: #a5b4fc !important;
+}
+
+/* Payload relationship field popup list */
+html[data-theme="dark"] .relationship-add-new__wrap,
+html[data-theme="dark"] .list-drawer__content,
+html[data-theme="dark"] .document-drawer__content,
+html[data-theme="dark"] [class*="popup__content"],
+html[data-theme="dark"] [class*="Popup__content"] {
+  background-color: var(--theme-elevation-100) !important;
+  border: 1px solid var(--theme-border) !important;
+}
+
+/* Generic popup/dropdown fix for both modes */
+[class*="popup__content"],
+[class*="Popup__content"],
+[class*="popup-button-list"],
+[class*="PopupList"] {
+  background-color: var(--tw-card) !important;
+  border: 1px solid var(--tw-border) !important;
+  border-radius: 10px !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15) !important;
+}
+
+html[data-theme="dark"] [class*="popup__content"],
+html[data-theme="dark"] [class*="Popup__content"],
+html[data-theme="dark"] [class*="popup-button-list"],
+html[data-theme="dark"] [class*="PopupList"] {
+  background-color: var(--theme-elevation-150) !important;
+  border-color: var(--theme-border) !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5) !important;
+}

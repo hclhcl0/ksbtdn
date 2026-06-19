@@ -113,7 +113,7 @@ export const NewsSidebarLayout = async ({
                     <article key={article.id} className={styles.smallCard}>
                       <Link href={`/bai-viet/${article.slug || article.id}`} className={styles.smallImg}>
                         <img
-                          src={article.image?.url || 'https://via.placeholder.com/200x130?text=CDC'}
+                          src={article.image?.url || '/logo.png'}
                           alt={article.title}
                         />
                       </Link>
