@@ -128,92 +128,46 @@ export const Articles: CollectionConfig = {
     ],
     afterChange: [
       async ({ doc, previousDoc, req }) => {
-        // Trigger broadcast only on state change to published
+        // Chỉ trigger khi chuyển trạng thái sang published VÀ checkbox autoZaloBroadcast được bật
         if (
           doc._status === 'published' &&
           previousDoc?._status !== 'published' &&
           doc.autoZaloBroadcast
         ) {
           try {
-            const { sendPromotionMessage } = await import('../lib/zalo-admin/zalo');
-            // Find all followers
-            const followersRes = await req.payload.find({
-              collection: 'zalo-followers',
-              limit: 5000,
-            });
-            const userIds = followersRes.docs.map(f => f.zaloUserId);
-            
-            if (userIds.length > 0) {
-              const baseUrl = process.env.NEXT_PUBLIC_SERVER_URL || process.env.PAYLOAD_PUBLIC_SERVER_URL || 'http://localhost:3000';
-              const fullUrl = `${baseUrl}/bai-viet/${doc.slug}`;
-              const coverUrl = doc.image && typeof doc.image === 'object' ? doc.image.url : '';
+            // Đọc cấu hình từ biến môi trường (thêm vào .env của Payload CMS)
+            const webhookUrl = process.env.ZALO_ADMIN_WEBHOOK_URL?.trim();
+            const webhookSecret = process.env.ZALO_ADMIN_WEBHOOK_SECRET?.trim();
 
-              // Build payload for list message with 1 item
-              const broadcastData = {
-                scope: "all",
-                messageType: "list",
-                elements: [{
-                  title: doc.title.substring(0, 120),
-                  subtitle: doc.description ? doc.description.substring(0, 120) : doc.title.substring(0, 120),
-                  imageUrl: coverUrl,
-                  actionType: "oa.open.url",
-                  actionValue: fullUrl
-                }]
-              };
-              
-              const payloadStr = JSON.stringify(broadcastData);
-
-              // Create log entry
-              const broadcastLog = await req.payload.create({
-                collection: 'zalo-broadcasts',
-                data: {
-                  scope: "all",
-                  content: doc.title,
-                  rawPayload: payloadStr,
-                  total: userIds.length,
-                  sentCount: 0,
-                  successCount: 0,
-                  failCount: 0,
-                  status: "sending",
-                  createdBy: req.user?.name || "Hệ thống Tự động",
-                },
-              });
-
-              // Send in background without blocking the request
-              setTimeout(async () => {
-                let success = 0;
-                let fail = 0;
-
-                for (const uid of userIds) {
-                  try {
-                    const result = await sendPromotionMessage(uid, broadcastData);
-                    if (result && result.error === 0) {
-                      success++;
-                    } else {
-                      fail++;
-                    }
-                  } catch (err) {
-                    fail++;
-                  }
-                  // Small delay to respect rate limits
-                  await new Promise(res => setTimeout(res, 100));
-                }
-
-                await req.payload.update({
-                  collection: 'zalo-broadcasts',
-                  id: broadcastLog.id,
-                  data: {
-                    status: "completed",
-                    sentCount: success + fail,
-                    successCount: success,
-                    failCount: fail,
-                    completedAt: new Date().toISOString(),
-                  },
-                });
-              }, 100);
+            if (!webhookUrl || !webhookSecret) {
+              console.warn('[Auto Broadcast] Chưa cấu hình ZALO_ADMIN_WEBHOOK_URL hoặc ZALO_ADMIN_WEBHOOK_SECRET trong .env');
+              return doc;
             }
+
+            // Resolve image URL
+            const baseUrl = process.env.NEXT_PUBLIC_SERVER_URL || process.env.PAYLOAD_PUBLIC_SERVER_URL || 'http://localhost:3000';
+            const imgField = doc.image && typeof doc.image === 'object' ? doc.image : null;
+            const imgPath = imgField?.sizes?.card?.url || imgField?.url || '';
+            const coverUrl = imgPath.startsWith('/') ? `${baseUrl}${imgPath}` : imgPath;
+
+            // Gọi webhook đến Zalo Admin (fire-and-forget, không block response)
+            fetch(webhookUrl, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                title: doc.title,
+                slug: doc.slug,
+                description: doc.description || '',
+                imageUrl: coverUrl,
+                webhookSecret,
+              }),
+            }).catch((err: Error) =>
+              console.error('[Auto Broadcast] Webhook call thất bại:', err.message)
+            );
+
+            console.log(`[Auto Broadcast] Đã gửi webhook cho bài "${doc.title}" (slug: ${doc.slug})`);
           } catch (e) {
-            console.error("Auto Zalo Broadcast Error:", e);
+            console.error('[Auto Broadcast] Lỗi:', e);
           }
         }
         return doc;
