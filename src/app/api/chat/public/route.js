@@ -95,7 +95,7 @@ export async function POST(request) {
       (m) => m && typeof m.role === "string" && typeof m.content === "string"
     );
 
-    const answer = await askAI("public_" + ip, question);
+    const answer = await askAI("public_" + ip, question, trimmedHistory);
 
     return NextResponse.json({ success: true, answer });
   } catch (error) {
