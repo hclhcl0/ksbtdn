@@ -33,21 +33,14 @@ import { Videos } from './collections/Videos.ts';
 import { VideoChannels } from './collections/VideoChannels.ts';
 import { FormSubmissions } from './collections/FormSubmissions.ts';
 import { OrgUnits } from './collections/OrgUnits.ts';
-import { ZaloFollowers } from './collections/ZaloFollowers.ts';
-import { ZaloMessageLogs } from './collections/ZaloMessageLogs.ts';
-import { ZaloStaffLinks } from './collections/ZaloStaffLinks.ts';
-import { ZaloBroadcasts } from './collections/ZaloBroadcasts.ts';
-import { ZaloSystemConfigs } from './collections/ZaloSystemConfigs.ts';
 import { AiKnowledge } from './collections/AiKnowledge.ts';
 import { ApiKeys } from './collections/ApiKeys.ts';
-import { ZaloSettingsGlobal } from './globals/ZaloSettingsGlobal.ts';
 import { Procurements } from './collections/Procurements.ts';
 import { Procedures } from './collections/Procedures.ts';
 import { ProcedureGroups } from './collections/ProcedureGroups.ts';
 import { Services } from './collections/Services.ts';
 import { ServiceCategories } from './collections/ServiceCategories.ts';
 
-import { SalaryEmailGlobal } from './globals/SalaryEmailGlobal.ts';
 
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
@@ -90,11 +83,6 @@ export default buildConfig({
     Videos,
     FormSubmissions,
     OrgUnits,
-    ZaloFollowers,
-    ZaloMessageLogs,
-    ZaloStaffLinks,
-    ZaloBroadcasts,
-    ZaloSystemConfigs,
     AiKnowledge,
     ApiKeys,
     Procurements,
@@ -112,8 +100,6 @@ export default buildConfig({
     Settings,
     BannerSettings,
     ThemeSettings,
-    ZaloSettingsGlobal,
-    SalaryEmailGlobal,
   ],
   plugins: [
     ...(process.env.BLOB_READ_WRITE_TOKEN

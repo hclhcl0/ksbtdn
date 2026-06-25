@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { answerPublicQuestion } from "@/lib/zalo-admin/gemini";
+import { askAI } from "@/lib/gemini";
 
 // ============================================================
 // GET /api/chat/public - Lấy cấu hình bật/tắt & tin nhắn chào mừng
@@ -95,7 +95,7 @@ export async function POST(request) {
       (m) => m && typeof m.role === "string" && typeof m.content === "string"
     );
 
-    const answer = await answerPublicQuestion(question, trimmedHistory);
+    const answer = await askAI("public_" + ip, question);
 
     return NextResponse.json({ success: true, answer });
   } catch (error) {

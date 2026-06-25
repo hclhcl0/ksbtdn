@@ -22,7 +22,7 @@ export default function ApiKeysTab() {
 
   const fetchGeminiKeys = async () => {
     try {
-      const res = await fetch("/api/zalo-admin/settings/gemini-keys");
+      const res = await fetch("/api/settings/gemini-keys");
       const json = await res.json();
       if (json.success) setGeminiKeys(json.data);
     } catch (e) {
@@ -34,7 +34,7 @@ export default function ApiKeysTab() {
 
   const fetchGroqKeys = async () => {
     try {
-      const res = await fetch("/api/zalo-admin/settings/groq-keys");
+      const res = await fetch("/api/settings/groq-keys");
       const json = await res.json();
       if (json.success) setGroqKeys(json.data);
     } catch (e) {
@@ -57,7 +57,7 @@ export default function ApiKeysTab() {
     setAddingGeminiKey(true);
     setGeminiKeyMsg(null);
     try {
-      const res = await fetch("/api/zalo-admin/settings/gemini-keys", {
+      const res = await fetch("/api/settings/gemini-keys", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ label: newGeminiLabel, apiKey: newGeminiKey }),
@@ -80,7 +80,7 @@ export default function ApiKeysTab() {
 
   const handleToggleGeminiKey = async (id: number, isActive: boolean) => {
     try {
-      await fetch("/api/zalo-admin/settings/gemini-keys", {
+      await fetch("/api/settings/gemini-keys", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id, isActive: !isActive }),
@@ -91,7 +91,7 @@ export default function ApiKeysTab() {
 
   const handleDeleteGeminiKey = async (id: number) => {
     if (!confirm("Bạn có chắc muốn xóa API Key này không?")) return;
-    const res = await fetch(`/api/zalo-admin/settings/gemini-keys?id=${id}`, { method: "DELETE" });
+    const res = await fetch(`/api/settings/gemini-keys?id=${id}`, { method: "DELETE" });
     const json = await res.json();
     if (json.success) {
       fetchGeminiKeys();
@@ -108,7 +108,7 @@ export default function ApiKeysTab() {
     setAddingGroqKey(true);
     setGroqKeyMsg(null);
     try {
-      const res = await fetch("/api/zalo-admin/settings/groq-keys", {
+      const res = await fetch("/api/settings/groq-keys", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ label: newGroqLabel, apiKey: newGroqKey }),
@@ -131,7 +131,7 @@ export default function ApiKeysTab() {
 
   const handleToggleGroqKey = async (id: number, isActive: boolean) => {
     try {
-      await fetch("/api/zalo-admin/settings/groq-keys", {
+      await fetch("/api/settings/groq-keys", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id, isActive: !isActive }),
@@ -142,7 +142,7 @@ export default function ApiKeysTab() {
 
   const handleDeleteGroqKey = async (id: number) => {
     if (!confirm("Bạn có chắc muốn xóa Groq Key này không?")) return;
-    const res = await fetch(`/api/zalo-admin/settings/groq-keys?id=${id}`, { method: "DELETE" });
+    const res = await fetch(`/api/settings/groq-keys?id=${id}`, { method: "DELETE" });
     const json = await res.json();
     if (json.success) {
       fetchGroqKeys();
